@@ -1,6 +1,979 @@
 /*
 Theme Name: Storefront Child SAE301
 Template: storefront
-Version: 1.0.0
+Version: 1.2.0
 */
 
+/* =========================================================
+   Couleurs et fonts de la maquette
+   ========================================================= */
+:root {
+  --rouille: #b03a1b;
+  --noir: #000;
+  --blanc: #fff;
+  --font-grand-titre: "Tall Dark And Handsome", "Oswald", sans-serif;
+  --font-titre: "Oswald", sans-serif;
+  --font-texte: "Lato", sans-serif;
+}
+
+@font-face {
+  font-family: "Tall Dark And Handsome";
+  src: url("fonts/talldark.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: var(--font-texte);
+}
+
+.site-header {
+  background: var(--blanc);
+  border-bottom: 0;
+  padding: 14px 0;
+  margin-bottom: 0;
+}
+
+.site-header .col-full {
+  max-width: 1140px;
+  padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.site-header .col-full::before,
+.site-header .col-full::after {
+  display: none;
+}
+
+/* Logo ou titre du site */
+.site-header .site-branding {
+  float: none;
+  width: auto;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.site-header .custom-logo-link img {
+  max-height: 45px;
+  width: auto;
+}
+
+.site-header .site-title {
+  font-family: var(--font-titre);
+  font-size: 26px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.site-header .site-title a,
+.site-header .site-title a:hover {
+  color: var(--noir);
+}
+
+.site-header .site-description {
+  display: none;
+}
+
+/* Le bloc menu : on annule la largeur et le flottant de Storefront */
+.site-header .main-navigation {
+  float: none;
+  width: auto;
+  margin: 0;
+  clear: none;
+}
+
+/* Icônes sociales */
+.watsons-social {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.watsons-social a {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--noir);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.watsons-social a:hover {
+  background: var(--rouille);
+}
+
+.watsons-social svg {
+  width: 13px;
+  height: 13px;
+  fill: var(--blanc);
+}
+
+@media (min-width: 768px) {
+  /* Le menu prend la place libre et se cale à droite */
+  .site-header .main-navigation {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  /* Le menu mobile et le burger sont totalement cachés */
+  .site-header .main-navigation .handheld-navigation,
+  .site-header .main-navigation .menu-toggle {
+    display: none !important;
+  }
+
+  /* Les liens côte à côte, sur une seule ligne */
+  .site-header .main-navigation .primary-navigation {
+    display: block;
+    width: 100%;
+  }
+
+  .site-header .main-navigation .primary-navigation ul.menu {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+  }
+
+  .site-header .main-navigation .primary-navigation ul.menu > li {
+    display: block;
+    float: none;
+    white-space: nowrap;
+  }
+
+  .site-header .main-navigation .primary-navigation ul.menu > li > a {
+    font-family: var(--font-titre);
+    font-weight: 300;
+    font-size: 15px;
+    text-transform: uppercase;
+    color: var(--noir);
+    padding: 8px 5px;
+  }
+
+  .site-header .main-navigation .primary-navigation ul.menu > li > a:hover,
+  .site-header
+    .main-navigation
+    .primary-navigation
+    ul.menu
+    > li.current-menu-item
+    > a {
+    color: var(--rouille);
+  }
+
+  /* Bouton COMMANDER */
+  .site-header
+    .main-navigation
+    .primary-navigation
+    ul.menu
+    > li.menu-commander {
+    margin-left: 6px;
+  }
+
+  .site-header
+    .main-navigation
+    .primary-navigation
+    ul.menu
+    > li.menu-commander
+    > a {
+    background: var(--rouille);
+    color: var(--blanc);
+    font-weight: 300;
+    padding: 8px 12px;
+  }
+
+  .site-header
+    .main-navigation
+    .primary-navigation
+    ul.menu
+    > li.menu-commander
+    > a:hover {
+    background: var(--noir);
+    color: var(--blanc);
+  }
+}
+
+/* Écrans moyens (petits portables, tablettes) : menu un peu plus petit */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .site-header .col-full {
+    gap: 10px;
+  }
+
+  .site-header .main-navigation .primary-navigation ul.menu > li > a {
+    font-size: 13px;
+    padding: 6px 3px;
+  }
+
+  .site-header
+    .main-navigation
+    .primary-navigation
+    ul.menu
+    > li.menu-commander
+    > a {
+    padding: 6px 8px;
+  }
+}
+
+/* Pour afficher le menu burger à gauche et le logo à droite */
+@media (max-width: 767px) {
+  .site-header {
+    padding: 20px 0;
+  }
+
+  .site-header .col-full {
+    position: relative;
+  }
+
+  .site-header .main-navigation {
+    order: 1;
+  }
+
+  .site-header .site-branding {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .site-header .custom-logo-link img {
+    max-height: 50px;
+  }
+
+  .watsons-social {
+    display: none;
+  }
+
+  /* Bouton burger : 3 traits noirs, sans le mot "Menu" */
+  .site-header button.menu-toggle {
+    float: none;
+    position: relative;
+    width: 32px;
+    height: 26px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-size: 0;
+    color: transparent;
+  }
+
+  .site-header button.menu-toggle::before,
+  .site-header button.menu-toggle::after,
+  .site-header button.menu-toggle span::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 32px;
+    height: 3px;
+    margin: 0;
+    background: var(--noir);
+    border-radius: 0;
+    transition:
+      transform 0.2s,
+      opacity 0.2s,
+      top 0.2s;
+  }
+
+  .site-header button.menu-toggle::before {
+    top: 1px;
+  }
+
+  .site-header button.menu-toggle span::before {
+    top: 11px;
+  }
+
+  .site-header button.menu-toggle::after {
+    top: 21px;
+  }
+
+  /* Burger ouvert : les traits forment une croix */
+  .site-header .toggled button.menu-toggle::before {
+    top: 11px;
+    transform: rotate(45deg);
+  }
+
+  .site-header .toggled button.menu-toggle::after {
+    top: 11px;
+    transform: rotate(-45deg);
+  }
+
+  .site-header .toggled button.menu-toggle span::before {
+    opacity: 0;
+  }
+
+  /* Menu déroulé sous l'en-tête */
+  .site-header .handheld-navigation {
+    position: absolute;
+    top: calc(100% + 20px);
+    left: 0;
+    right: 0;
+    z-index: 99;
+    background: var(--blanc);
+  }
+
+  .site-header .handheld-navigation ul.menu li a {
+    font-family: var(--font-titre);
+    font-weight: 300;
+    font-size: 18px;
+    text-transform: uppercase;
+    color: var(--noir);
+    padding: 12px 16px;
+  }
+
+  .site-header .handheld-navigation ul.menu li.menu-commander a {
+    background: var(--rouille);
+    color: var(--blanc);
+  }
+}
+
+/* Pour le footer */
+.watsons-contact {
+  background-color: #2a2a2a;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
+    var(--photo-contact, none);
+  background-size: cover;
+  background-position: center;
+  color: var(--blanc);
+  text-align: center;
+  padding: 90px 20px;
+}
+
+.watsons-contact__inner {
+  max-width: 700px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Séparateur : deux traits fins avec une étoile entre les deux */
+.watsons-sep {
+  display: block;
+  position: relative;
+  width: 170px;
+  height: 20px;
+  margin: 0 auto;
+  background:
+    linear-gradient(var(--blanc), var(--blanc)) left center / 65px 2px no-repeat,
+    linear-gradient(var(--blanc), var(--blanc)) right center / 65px 2px
+      no-repeat;
+}
+
+.watsons-sep::after {
+  content: "★";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  line-height: 1;
+  color: #8c8c8c;
+}
+
+.watsons-contact__titre {
+  font-family: var(--font-grand-titre);
+  font-weight: 400;
+  text-transform: uppercase;
+  color: var(--blanc);
+  font-size: clamp(36px, 6vw, 72px);
+  line-height: 1;
+  margin: 36px 0 24px;
+}
+
+.watsons-contact__texte {
+  font-family: var(--font-titre);
+  font-weight: 300;
+  font-size: 17px;
+  margin: 0 0 36px;
+}
+
+.watsons-contact__mail,
+.watsons-contact__tel {
+  font-family: var(--font-titre);
+  font-weight: 300;
+  font-size: clamp(22px, 3vw, 32px);
+  line-height: 1.3;
+  color: var(--blanc);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.watsons-contact__mail {
+  margin-top: 36px;
+}
+
+.watsons-contact a:hover {
+  color: var(--blanc);
+  opacity: 0.8;
+}
+
+.watsons-contact__adresse {
+  font-family: var(--font-titre);
+  font-weight: 300;
+  font-size: clamp(17px, 2vw, 22px);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--blanc);
+  margin: 32px 0 30px;
+  padding-bottom: 2px;
+}
+
+.watsons-contact__bouton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--blanc);
+  padding: 8px 16px;
+  font-family: var(--font-titre);
+  font-weight: 300;
+  font-size: 17px;
+  text-transform: uppercase;
+  color: var(--blanc);
+  text-decoration: none;
+}
+
+.watsons-contact__bouton svg {
+  width: 15px;
+  height: 15px;
+  fill: var(--blanc);
+}
+
+/* Texte et titres en noir, plus de violet */
+body {
+  color: var(--noir);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.entry-title a {
+  color: var(--noir);
+}
+
+/* Grands titres de page dans la police de la maquette */
+h1,
+.entry-title,
+h1 a,
+.entry-title a {
+  font-family: var(--font-grand-titre);
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: normal;
+}
+
+/* Sous-titres en Oswald */
+h2,
+h3 {
+  font-family: var(--font-titre);
+  font-weight: 400;
+}
+
+/* Liens */
+a {
+  color: var(--noir);
+}
+
+a:hover,
+a:focus {
+  color: var(--rouille);
+}
+
+/* Tous les boutons : rouille, texte blanc, sans arrondi */
+button,
+.button,
+input[type="submit"],
+input[type="button"],
+.added_to_cart,
+.wc-block-components-button {
+  background-color: var(--rouille);
+  border-color: var(--rouille);
+  color: var(--blanc);
+  border-radius: 0;
+  font-family: var(--font-texte);
+  font-weight: 400;
+}
+
+button:hover,
+.button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover,
+.added_to_cart:hover,
+.wc-block-components-button:hover {
+  background-color: var(--noir);
+  border-color: var(--noir);
+  color: var(--blanc);
+}
+
+.site-footer {
+  background: var(--blanc);
+  padding: 30px 0 20px;
+  margin: 0;
+}
+
+.watsons-footer-bas {
+  text-align: center;
+}
+
+.watsons-footer-menu ul {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.watsons-footer-menu li {
+  margin: 0;
+}
+
+/* Petit trait gris entre les liens */
+.watsons-footer-menu li + li::before {
+  content: "|";
+  color: #ccc;
+  margin: 0 8px;
+}
+
+.watsons-footer-menu a {
+  font-family: var(--font-titre);
+  font-weight: 300;
+  font-size: 16px;
+  text-transform: uppercase;
+  color: var(--noir);
+  text-decoration: none;
+}
+
+.watsons-footer-menu a:hover {
+  color: var(--rouille);
+}
+
+/* Pas de bouton COMMANDER dans le menu du bas */
+.watsons-footer-menu li.menu-commander {
+  display: none;
+}
+
+.watsons-copyright {
+  font-size: 13px;
+  color: var(--noir);
+  margin: 0;
+}
+
+.watsons-copyright a {
+  color: var(--noir);
+  text-decoration: none;
+}
+
+.watsons-copyright a:hover {
+  color: var(--rouille);
+}
+
+.watsons-copyright__sep {
+  color: #ccc;
+  margin: 0 6px;
+}
+
+/* Mobile : tout plus petit, comme sur la maquette mobile */
+@media (max-width: 767px) {
+  .watsons-contact {
+    padding: 60px 20px;
+  }
+
+  .watsons-contact__texte {
+    font-size: 15px;
+  }
+
+  .watsons-footer-menu a {
+    font-size: 11px;
+  }
+
+  .watsons-footer-menu li + li::before {
+    margin: 0 4px;
+  }
+
+  .watsons-copyright {
+    font-size: 9px;
+  }
+}
+
+/*  US-2.3 : Afficher la carte avec les bonnes couleurs, les bonnes typos, ... comme sur la maquette*/
+.carte {
+  padding: 20px 0 60px;
+}
+
+/* Grand titre LA CARTE */
+.carte__titre {
+  font-family: var(--font-grand-titre);
+  font-weight: normal;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  font-size: 72px;
+  line-height: 1;
+  margin: 0 0 40px;
+}
+
+/* Filtres TOUT / BURGERS / BOISSONS / DESSERTS */
+.carte-filtres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 50px;
+}
+
+.carte-filtres__lien {
+  min-width: 82px;
+  padding: 10px 14px;
+  border: 1px solid var(--noir);
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-size: 13px;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+  color: var(--noir);
+}
+
+.carte-filtres__lien:hover {
+  border-color: var(--rouille);
+  color: var(--rouille);
+}
+
+.carte-filtres__lien.is-active {
+  background: var(--rouille);
+  border-color: var(--rouille);
+  color: var(--blanc);
+}
+
+/* Les catégories sur 2 colonnes */
+.carte-categories {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 50px;
+  row-gap: 50px;
+  align-items: start;
+}
+
+.carte-categorie__titre {
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-size: 28px;
+  text-transform: uppercase;
+  color: var(--rouille);
+  margin: 0 0 10px;
+}
+
+/* Une ligne produit : nom | prix | bouton, et la description dessous */
+.carte-produit {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  grid-template-areas:
+    "nom  prix bouton"
+    "desc .    .";
+  column-gap: 14px;
+  align-items: center;
+  padding: 26px 0;
+  border-bottom: 2px dotted var(--noir);
+}
+
+.carte-produit__nom {
+  grid-area: nom;
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-size: 28px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.carte-produit__nom a {
+  color: var(--noir);
+  text-decoration: none;
+}
+
+.carte-produit__nom a:hover {
+  color: var(--rouille);
+}
+
+.carte-produit__desc {
+  grid-area: desc;
+  font-family: var(--font-texte);
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.carte-produit__desc p {
+  margin: 0;
+}
+
+.carte-produit__prix {
+  grid-area: prix;
+  font-family: var(--font-titre);
+  font-weight: 300;
+  font-size: 18px;
+  color: var(--rouille);
+  white-space: nowrap;
+}
+
+.carte-produit__prix .amount {
+  color: var(--rouille);
+}
+
+.carte-produit__bouton.button {
+  grid-area: bouton;
+  font-family: var(--font-titre);
+  font-weight: 300;
+  font-size: 13px;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  white-space: nowrap;
+}
+
+/* Sur la maquette, pas de description sous les boissons et les desserts */
+.carte-categorie--boissons .carte-produit__desc,
+.carte-categorie--desserts .carte-produit__desc {
+  display: none;
+}
+
+/* Mobile : une seule colonne, filtres sur toute la largeur */
+@media (max-width: 767px) {
+  .carte__titre {
+    font-size: 48px;
+    margin-bottom: 24px;
+  }
+
+  .carte-filtres {
+    gap: 8px;
+    margin-bottom: 36px;
+  }
+
+  .carte-filtres__lien {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 4px;
+  }
+
+  .carte-categories {
+    grid-template-columns: 1fr;
+    row-gap: 36px;
+  }
+
+  .carte-produit {
+    grid-template-areas:
+      "nom  prix bouton"
+      "desc desc desc";
+    padding: 20px 0;
+  }
+
+  .carte-produit__nom {
+    font-size: 16px;
+  }
+
+  .carte-produit__desc {
+    font-size: 13px;
+  }
+
+  .carte-produit__prix {
+    font-size: 15px;
+  }
+
+  .carte-produit__bouton.button {
+    padding: 10px 14px;
+  }
+}
+
+/* Pour retirer le soulignement des noms de produits */
+.carte .carte-produit__nom a:not(.button):not(.components-button) {
+  text-decoration: none;
+}
+
+/* Défilement en douceur vers l'ancre #carte */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Pas de titre "Accueil" en haut de la page d'accueil */
+.home .entry-header {
+  display: none;
+}
+
+/* Filtres : encadrés de noir, et rouille seulement pour le filtre actif */
+.carte .carte-filtres__lien {
+  background: transparent;
+  border: 1px solid var(--noir);
+  border-radius: 0;
+  color: var(--noir);
+  cursor: pointer;
+}
+
+.carte .carte-filtres__lien:hover {
+  background: transparent;
+  border-color: var(--rouille);
+  color: var(--rouille);
+}
+
+.carte .carte-filtres__lien.is-active,
+.carte .carte-filtres__lien.is-active:hover {
+  background: var(--rouille);
+  border-color: var(--rouille);
+  color: var(--blanc);
+}
+
+/* US-2.4 : fiche produit */
+.retour-carte {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-texte);
+  font-size: 15px;
+  color: var(--noir);
+  text-decoration: none;
+  margin-bottom: 30px;
+}
+
+.retour-carte svg {
+  width: 9px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+.retour-carte:hover {
+  color: var(--rouille);
+}
+
+/* Titre en Oswald (et non en Tall Dark and Handsome) */
+.single-product div.product .product_title.entry-title {
+  font-family: var(--font-titre);
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: uppercase;
+  font-size: 40px;
+  line-height: 1.1;
+  margin: 0 0 12px;
+}
+
+.single-product div.product .woocommerce-product-details__short-description {
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.single-product div.product .woocommerce-product-details__short-description p {
+  margin: 0;
+}
+
+.single-product div.product p.price,
+.single-product div.product p.price .amount {
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-size: 28px;
+  color: var(--noir);
+}
+
+.single-product div.product p.price {
+  margin-bottom: 30px;
+}
+
+/* Quantité + bouton côte à côte, libellé au-dessus */
+.single-product div.product form.cart {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 6px;
+  padding: 0;
+}
+
+.single-product div.product form.cart::before,
+.single-product div.product form.cart::after {
+  display: none;
+}
+
+.produit-quantite__label {
+  width: 100%;
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.single-product div.product form.cart .quantity {
+  float: none;
+  margin: 0;
+}
+
+.single-product div.product form.cart .quantity .qty {
+  width: 90px;
+  height: 100%;
+  min-height: 45px;
+  border: 1px solid var(--noir);
+  background: var(--blanc);
+  box-shadow: none;
+  text-align: center;
+  font-size: 15px;
+}
+
+.single-product div.product form.cart .button {
+  float: none;
+  margin: 0;
+  padding: 12px 18px;
+  font-size: 15px;
+}
+
+/* Mobile : petite photo à gauche, titre et prix à côté, panier dessous */
+@media (max-width: 767px) {
+  .single-product div.product .woocommerce-product-gallery {
+    float: left;
+    width: 40%;
+    margin: 0 16px 20px 0;
+  }
+
+  .single-product div.product .product_title.entry-title {
+    font-size: 30px;
+  }
+
+  .single-product div.product .woocommerce-product-details__short-description {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .single-product div.product p.price,
+  .single-product div.product p.price .amount {
+    font-size: 16px;
+  }
+
+  .single-product div.product form.cart {
+    clear: both;
+    padding-top: 10px;
+  }
+}
+
+/* Bouton "Ajouter au panier" en rouille (Storefront le met en gris foncé) */
+.single-product div.product form.cart .button.alt {
+  background-color: var(--rouille);
+  border-color: var(--rouille);
+  color: var(--blanc);
+}
+
+.single-product div.product form.cart .button.alt:hover {
+  background-color: var(--noir);
+  border-color: var(--noir);
+}
+
+/* Champ Quantité sans les petites flèches */
+.single-product div.product form.cart .qty::-webkit-outer-spin-button,
+.single-product div.product form.cart .qty::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.single-product div.product form.cart .qty {
+  -moz-appearance: textfield;
+}
+
+/* Photo du produit non cliquable */
+.woocommerce-product-gallery__image a {
+  pointer-events: none;
+  cursor: default;
+}
