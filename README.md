@@ -98,3 +98,7 @@ rm ~/sae301-dev.sql
 | Date       | Itération | Ce qui a été mis en prod                                                                                                                                        | Remarques                                                                                                                            |
 | ---------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
 | 16/10/2026 | 1         | Installation de WordPress, WooCommerce 11.2.1, Storefront 4.6.2, Secure Custom Fields 6.9.6, Classic Editor 1.7.0 et du thème enfant. Import de la base de dev. | Envoi des plugins trop lent (Bureau synchronisé avec iCloud) : je les ai téléchargés directement sur le serveur, aux mêmes versions. |
+
+ITERATION 2 :Catalogue et produits simples
+
+| 17/10/2026 | 2 | Apparence (en-tête, pied de page, polices), 3 catégories et 9 produits, carte sur l'accueil et la boutique, fiche produit | Commit f3bcaca. Thème : git pull. Base : import + search-replace (45 remplacements). Images : envoi de uploads. Traductions installées en prod. Problèmes : fichiers bloqués par iCloud (git add), scp coupé une fois (relancé). |
