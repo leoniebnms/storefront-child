@@ -108,9 +108,9 @@ rm ~/sae301-dev.sql
 ### 19/10/2026 – IT 3 : Produits variables
 
 - **Mis en prod :** burgers en produits variables (sauce, taille, ingrédients à retirer), 3 niveaux de stock, sélecteur d'options comme la maquette.
-- **Remarques :** commit b50108b. Mise en prod reportée : serveur mmi.unilim.fr inaccessible (connexion SSH refusée pour tous les étudiants le 19/10 au matin). À déployer avec l'IT 4.
+- **Remarques :** commit b50108b. Serveur mmi.unilim.fr inaccessible le 19/10 au matin (connexion SSH refusée pour tous les étudiants) : déployée avec l'IT 4 une fois le serveur revenu. Thème : git pull. Base : sauvegarde, import + search-replace (45 remplacements). Images : envoi de uploads.
 
 ### 19/10/2026 – IT 4 : Enrichissement du contenu
 
 - **Mis en prod :** champs personnalisés SCF (Composition, Allergènes, Valeurs nutritionnelles) remplis sur les 3 burgers, affichés avant le prix en menus dépliants.
-- **Remarques :** commit c33e0e6. Mise en prod en attente (même panne serveur).
+- **Remarques :** commit c33e0e6. Déployée en même temps que l'IT 3 (même procédure). Vérifié en prod en fenêtre privée : menus dépliants, prix selon la taille, 3 niveaux de stock.
