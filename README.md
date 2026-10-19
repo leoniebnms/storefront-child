@@ -95,12 +95,22 @@ rm ~/sae301-dev.sql
 
 ## 3. Journal des mises en production
 
-| Date       | Itération | Ce qui a été mis en prod                                                                                                                                        | Remarques                                                                                                                            |
-| ---------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 16/10/2026 | IT 1      | Installation de WordPress, WooCommerce 11.2.1, Storefront 4.6.2, Secure Custom Fields 6.9.6, Classic Editor 1.7.0 et du thème enfant. Import de la base de dev. | Envoi des plugins trop lent (Bureau synchronisé avec iCloud) : je les ai téléchargés directement sur le serveur, aux mêmes versions. |
+### 16/10/2026 – IT 1 : Environnements de Dev et de Prod
 
-ITERATION 2 :Catalogue et produits simples
+- **Mis en prod :** installation de WordPress, WooCommerce 11.2.1, Storefront 4.6.2, Secure Custom Fields 6.9.6, Classic Editor 1.7.0 et du thème enfant. Import de la base de dev.
+- **Remarques :** envoi des plugins trop lent (Bureau synchronisé avec iCloud) : je les ai téléchargés directement sur le serveur, aux mêmes versions.
 
-| 17/10/2026 | IT 2 | Apparence (en-tête, pied de page, polices), 3 catégories et 9 produits, carte sur l'accueil et la boutique, fiche produit | Commit f3bcaca. Thème : git pull. Base : import + search-replace (45 remplacements). Images : envoi de uploads. Traductions installées en prod. Problèmes : fichiers bloqués par iCloud (git add), scp coupé une fois (relancé). |
+### 17/10/2026 – IT 2 : Catalogue et produits simples
 
-| 19/10/2026 | IT 3 | Burgers en produits variables (sauce, taille, ingrédients à retirer), 3 niveaux de stock, sélecteur d'options comme la maquette | Commit b50108b. Mise en prod reportée : serveur mmi.unilim.fr inaccessible (connexion SSH refusée pour tous les étudiants le 19/10 au matin). |
+- **Mis en prod :** apparence (en-tête, pied de page, polices), 3 catégories et 9 produits, carte sur l'accueil et la boutique, fiche produit.
+- **Remarques :** commit f3bcaca. Thème : git pull. Base : import + search-replace (45 remplacements). Images : envoi de uploads. Traductions installées en prod. Problèmes : fichiers bloqués par iCloud (git add), scp coupé une fois (relancé).
+
+### 19/10/2026 – IT 3 : Produits variables
+
+- **Mis en prod :** burgers en produits variables (sauce, taille, ingrédients à retirer), 3 niveaux de stock, sélecteur d'options comme la maquette.
+- **Remarques :** commit b50108b. Mise en prod reportée : serveur mmi.unilim.fr inaccessible (connexion SSH refusée pour tous les étudiants le 19/10 au matin). À déployer avec l'IT 4.
+
+### 19/10/2026 – IT 4 : Enrichissement du contenu
+
+- **Mis en prod :** champs personnalisés SCF (Composition, Allergènes, Valeurs nutritionnelles) remplis sur les 3 burgers, affichés avant le prix en menus dépliants.
+- **Remarques :** commit c33e0e6. Mise en prod en attente (même panne serveur).
