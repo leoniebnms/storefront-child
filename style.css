@@ -977,3 +977,158 @@ html {
   pointer-events: none;
   cursor: default;
 }
+
+/* US-3.2 : le prix de la variation s'affiche en haut, on cache donc le doublon que WooCommerce met sous les listes */
+.single-product div.product .woocommerce-variation-price {
+  display: none;
+}
+
+/* US-3.2 : produits variables, Quantité et bouton côte à côte comme pour les produits simples */
+.single-product div.product form.variations_form {
+  display: block;
+}
+
+.single-product div.product .woocommerce-variation-add-to-cart {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 6px;
+}
+
+.single-product div.product .woocommerce-variation-add-to-cart .button {
+  float: none;
+  margin: 0;
+}
+
+.single-product div.product .single_add_to_cart_button.disabled {
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+/* US-3.2 : sélecteur d'options comme sur la maquette */
+
+/* Le tableau des options devient une simple colonne : libellé au-dessus, liste en dessous */
+.single-product div.product table.variations,
+.single-product div.product table.variations tbody,
+.single-product div.product table.variations tr,
+.single-product div.product table.variations th,
+.single-product div.product table.variations td {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.single-product div.product table.variations {
+  margin: 0 0 6px;
+}
+
+.single-product div.product table.variations th.label label {
+  display: block;
+  margin: 0 0 8px;
+  font-family: var(--font-texte);
+  font-weight: 400;
+  font-size: 15px;
+}
+
+.single-product div.product table.variations td.value {
+  margin-bottom: 22px;
+}
+
+/* Listes Sauce et Taille : grand cadre noir avec une petite flèche */
+.single-product div.product table.variations select {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  max-width: 365px;
+  height: 45px;
+  padding: 0 40px 0 14px;
+  border: 1px solid var(--noir);
+  border-radius: 0;
+  background: var(--blanc)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E")
+    no-repeat right 14px center / 12px 8px;
+  box-shadow: none;
+  font-family: var(--font-texte);
+  font-size: 15px;
+  color: var(--noir);
+  cursor: pointer;
+}
+
+/* Pas de lien "Effacer" sur la maquette */
+.single-product div.product .reset_variations {
+  display: none !important;
+}
+
+/* Cases à cocher "Ingrédients à retirer" */
+.ingredients-retirer {
+  border: 0;
+  padding: 0;
+  margin: 0 0 22px;
+}
+
+.ingredients-retirer legend {
+  padding: 0;
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+
+.ingredients-retirer label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 22px 6px 0;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.ingredients-retirer input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  border: 1px solid #999;
+  border-radius: 0;
+  background: var(--blanc);
+  cursor: pointer;
+}
+
+.ingredients-retirer input[type="checkbox"]:checked {
+  background: var(--rouille);
+  border-color: var(--rouille);
+}
+
+/* Ligne "Prix sélectionné : 15,00 € - En stock" */
+.prix-selectionne {
+  margin: 0 0 22px;
+  font-size: 15px;
+}
+
+.prix-selectionne strong .amount {
+  font-weight: 700;
+}
+
+.stock-statut.is-faible {
+  color: #c97a00;
+}
+
+.stock-statut.is-epuise {
+  color: var(--rouille);
+}
+
+/* Le stock est déjà dans la ligne "Prix sélectionné" : on cache celui de WooCommerce */
+.single-product div.product .woocommerce-variation-availability {
+  display: none;
+}
+
+/* Ingrédients à retirer : pas de fond gris (style Storefront des fieldset) */
+.single-product div.product .ingredients-retirer,
+.single-product div.product .ingredients-retirer legend {
+  background: transparent;
+}
+
+.single-product div.product .ingredients-retirer legend {
+  font-weight: 400;
+}

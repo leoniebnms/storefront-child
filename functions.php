@@ -44,7 +44,6 @@ add_action( 'init', function () {
 
 	// Pour retirer le fil d'Ariane (Accueil > Shop).
 	remove_action( 'storefront_before_content', 'woocommerce_breadcrumb', 10 );
-
 } );
 
 /**
@@ -130,7 +129,7 @@ function watsons_footer_bas() {
 }
 
 /**
- * US-2.3 : AFficher la carte du Watson's Pub.
+ * US-2.3 : Afficher la carte du Watson's Pub.
  */
 function watsons_carte( $args = array() ) {
 	$args = wp_parse_args(
@@ -319,4 +318,168 @@ add_action( 'after_setup_theme', function () {
 add_action( 'init', function () {
 	remove_action( 'storefront_page_after', 'storefront_edit_post_link', 30 );
 	remove_action( 'woocommerce_single_product_summary', 'storefront_edit_post_link', 60 );
+} );
+
+/** US-3.2 : sélecteur d'options comme sur la maquette */
+/** Prix des produits variables sur la fiche produit : "À partir de 15,00 €" au lieu de "15,00 € – 19,00 €" et sur la carte : seulement le prix de départ, "15,00 €".*/
+add_filter( 'woocommerce_variable_price_html', function ( $prix, $produit ) {
+	$prix_min = wc_price( $produit->get_variation_price( 'min', true ) );
+
+	if ( is_product() && get_queried_object_id() === $produit->get_id() ) {
+		return 'À partir de ' . $prix_min;
+	}
+
+	return $prix_min;
+}, 10, 2 );
+
+/* US-3.1 : "En stock", "Stock faible", "Épuisé". Le seuil "faible" est celui réglé dans WooCommerce > Réglages > Produits > Inventaire. */
+add_filter( 'woocommerce_get_availability_text', function ( $texte, $produit ) {
+	if ( ! $produit->is_in_stock() ) {
+		return 'Épuisé';
+	}
+
+	if ( $produit->managing_stock() ) {
+		$quantite = (int) $produit->get_stock_quantity();
+
+		if ( $quantite <= 0 ) {
+			return 'Épuisé';
+		}
+
+		if ( $quantite <= wc_get_low_stock_amount( $produit ) ) {
+			return 'Stock faible';
+		}
+	}
+
+	return 'En stock';
+}, 10, 2 );
+
+/**
+ * Cases à cocher "Ingrédients à retirer", sous les listes Sauce et Taille.
+ * Les ingrédients viennent de l'attribut "Ingrédients à retirer" (slug : ingredients)
+ * ajouté au produit dans l'admin.
+ */
+function watsons_ingredients_du_produit( $produit_id ) {
+	$ingredients = wc_get_product_terms( $produit_id, 'pa_ingredients', array( 'fields' => 'names' ) );
+
+	return is_wp_error( $ingredients ) ? array() : $ingredients;
+}
+
+add_action( 'woocommerce_after_variations_table', function () {
+	global $product;
+
+	$ingredients = watsons_ingredients_du_produit( $product->get_id() );
+
+	if ( empty( $ingredients ) ) {
+		return;
+	}
+	?>
+	<fieldset class="ingredients-retirer">
+		<legend>Ingrédients à retirer</legend>
+		<?php foreach ( $ingredients as $ingredient ) : ?>
+			<label>
+				<input type="checkbox" name="ingredients_retires[]" value="<?php echo esc_attr( $ingredient ); ?>">
+				<?php echo esc_html( $ingredient ); ?>
+			</label>
+		<?php endforeach; ?>
+	</fieldset>
+	<?php
+} );
+
+/**
+ * Ligne "Prix sélectionné : 15,00 € - En stock", remplie par le JavaScript.
+ */
+add_action( 'woocommerce_before_single_variation', function () {
+	echo '<p class="prix-selectionne" hidden></p>';
+} );
+
+/**
+ * Les ingrédients cochés sont gardés dans le panier...
+ */
+add_filter( 'woocommerce_add_cart_item_data', function ( $donnees, $produit_id ) {
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- formulaire d'ajout au panier de WooCommerce.
+	if ( empty( $_POST['ingredients_retires'] ) ) {
+		return $donnees;
+	}
+
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing
+	$coches = array_map( 'sanitize_text_field', wp_unslash( (array) $_POST['ingredients_retires'] ) );
+
+	// On ne garde que les ingrédients qui existent vraiment pour ce produit.
+	$coches = array_values( array_intersect( $coches, watsons_ingredients_du_produit( $produit_id ) ) );
+
+	if ( $coches ) {
+		$donnees['ingredients_retires'] = $coches;
+	}
+
+	return $donnees;
+}, 10, 2 );
+
+/**
+ * ... affichés dans le panier ("Sans : Oignons, Salade")...
+ */
+add_filter( 'woocommerce_get_item_data', function ( $infos, $article ) {
+	if ( ! empty( $article['ingredients_retires'] ) ) {
+		$infos[] = array(
+			'key'   => 'Sans',
+			'value' => implode( ', ', $article['ingredients_retires'] ),
+		);
+	}
+
+	return $infos;
+}, 10, 2 );
+
+/**
+ * ... et enregistrés dans la commande, pour la cuisine.
+ */
+add_action( 'woocommerce_checkout_create_order_line_item', function ( $ligne, $cle, $article ) {
+	if ( ! empty( $article['ingredients_retires'] ) ) {
+		$ligne->add_meta_data( 'Sans', implode( ', ', $article['ingredients_retires'] ) );
+	}
+}, 10, 3 );
+
+/**
+ * JavaScript de la fiche produit : quand le visiteur choisit ses options,
+ * on affiche "Prix sélectionné : ... - En stock" et on met à jour le prix du haut.
+ */
+add_action( 'wp_footer', function () {
+	if ( ! is_product() ) {
+		return;
+	}
+	?>
+	<script>
+	jQuery( function ( $ ) {
+		// true : le prix du haut change aussi. false : il reste sur "À partir de..." comme sur la maquette.
+		var majPrixDuHaut = true;
+
+		var $formulaire = $( 'form.variations_form' );
+		var $prix = $( '.summary p.price' ).first();
+		var $ligne = $formulaire.find( '.prix-selectionne' );
+
+		if ( ! $formulaire.length ) {
+			return;
+		}
+
+		var prixDeDepart = $prix.html();
+
+		$formulaire.on( 'found_variation', function ( evenement, variation ) {
+			var prixChoisi = variation.price_html ? $( variation.price_html ).html() : prixDeDepart;
+			var stock = $( '<div>' ).html( variation.availability_html ).text().trim() || 'En stock';
+			var classe = ! variation.is_in_stock ? 'is-epuise' : ( stock === 'Stock faible' ? 'is-faible' : 'is-dispo' );
+
+			if ( majPrixDuHaut && variation.price_html ) {
+				$prix.html( prixChoisi );
+			}
+
+			$ligne
+				.html( '<span class="stock-statut ' + classe + '">' + stock + '</span>' )
+				.prop( 'hidden', false );
+		} );
+
+		$formulaire.on( 'reset_data hide_variation', function () {
+			$prix.html( prixDeDepart );
+			$ligne.prop( 'hidden', true ).empty();
+		} );
+	} );
+	</script>
+	<?php
 } );
