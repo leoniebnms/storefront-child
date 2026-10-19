@@ -483,3 +483,38 @@ add_action( 'wp_footer', function () {
 	</script>
 	<?php
 } );
+
+/** US-4.3 : afficher les champs personnalisés (SCF) sur la fiche produit, entre la description et le prix. */
+add_action( 'woocommerce_single_product_summary', function () {
+	global $product;
+
+	// Nom du champ dans SCF => titre affiché sur le site.
+	$champs = array(
+		'composition'             => 'Composition',
+		'allergenes'              => 'Allergènes',
+		'valeurs_nutritionnelles' => 'Valeurs nutritionnelles',
+	);
+
+	$blocs = '';
+
+	foreach ( $champs as $nom => $titre ) {
+		$valeur = trim( (string) get_post_meta( $product->get_id(), $nom, true ) );
+
+		// Un champ vide n'est pas affiché.
+		if ( '' === $valeur ) {
+			continue;
+		}
+
+		$blocs .= sprintf(
+			'<details class="infos-produit__bloc infos-produit__bloc--%1$s"><summary class="infos-produit__titre">%2$s</summary><p class="infos-produit__texte">%3$s</p></details>',
+			esc_attr( $nom ),
+			esc_html( $titre ),
+			nl2br( esc_html( $valeur ) )
+		);
+	}
+
+	// Aucun champ rempli (boissons, desserts...) : rien n'est affiché.
+	if ( $blocs ) {
+		echo '<div class="infos-produit">' . $blocs . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput -- déjà échappé ci-dessus.
+	}
+}, 22 );

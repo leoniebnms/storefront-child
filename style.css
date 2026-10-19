@@ -1132,3 +1132,62 @@ html {
 .single-product div.product .ingredients-retirer legend {
   font-weight: 400;
 }
+
+/* US-4.3 : informations produit (Composition, Allergènes, Valeurs nutritionnelles) dans un menu dépliant */
+.infos-produit {
+  margin: 0 0 26px;
+  border-top: 2px dotted var(--noir);
+}
+
+.infos-produit__bloc {
+  border-bottom: 2px dotted var(--noir);
+}
+
+/* Le titre cliquable */
+.infos-produit__titre {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-size: 16px;
+  text-transform: uppercase;
+  color: var(--rouille);
+  cursor: pointer;
+  list-style: none;
+}
+
+/* On cache le petit triangle par défaut du navigateur */
+.infos-produit__titre::-webkit-details-marker {
+  display: none;
+}
+
+/* Un "+" à droite, qui devient "−" quand c'est ouvert */
+.infos-produit__titre::after {
+  content: "+";
+  font-size: 22px;
+  line-height: 1;
+}
+
+.infos-produit__bloc[open] .infos-produit__titre::after {
+  content: "−";
+}
+
+.infos-produit__titre:hover {
+  color: var(--noir);
+}
+
+/* Le contenu, visible une fois déplié */
+.infos-produit__texte {
+  margin: 0;
+  padding: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Photo du produit non cliquable */
+.woocommerce-product-gallery__image a {
+  pointer-events: none;
+  cursor: default;
+}
