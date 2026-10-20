@@ -114,3 +114,8 @@ rm ~/sae301-dev.sql
 
 - **Mis en prod :** champs personnalisés SCF (Composition, Allergènes, Valeurs nutritionnelles) remplis sur les 3 burgers, affichés avant le prix en menus dépliants.
 - **Remarques :** commit c33e0e6. Déployée en même temps que l'IT 3 (même procédure). Vérifié en prod en fenêtre privée : menus dépliants, prix selon la taille, 3 niveaux de stock.
+
+### 20/10/2026 – IT 5 : Panier et expédition
+
+- **Mis en prod :** paiements "Virement" et "Paiement au retrait", zone d'expédition en France avec "Retrait en boutique" gratuit et "Livraison à domicile" 6,90 €, page Panier comme la maquette avec tableau, quantité − 1 +, bloc Réception, bloc Total + bouton panier sticky sur la page d'accueil et la page produit.
+- **Remarques :** commit b93aa96. Pages Panier et Commande passées en shortcodes classiques ([woocommerce_cart], [woocommerce_checkout]) pour pouvoir les personnaliser. Template woocommerce/cart/cart-totals.php surchargé. Extension Packlink PRO désactivée.
