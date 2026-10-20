@@ -124,3 +124,8 @@ rm ~/sae301-dev.sql
 
 - **Mis en prod :** bloc « Instructions pour le retrait » sur la page de commande (texte modifiable dans WooCommerce -> Réglages -> Général -> Click & Collect). Pages Commande et Confirmation faites comme les maquettes : formulaire dans l'ordre de la maquette, paiement dans le cadre de gauche, récapitulatif « Votre panier », bouton "Payer XX €", page Confirmation avec récap, numéro de commande, instructions et compte à rebours.
 - **Remarques :** commits 1020829 et 6c7539d. Nouveau template woocommerce/checkout/thankyou.php. Le fichier avait été coupé par iCloud au premier commit (erreur critique en prod sur la page de confirmation, trouvée en activant WP_DEBUG), corrigé par un second commit.
+
+### 20/10/2026 – IT 7 : Compte client
+
+- **Mis en prod :** création de compte et connexion configurées (WooCommerce -> Comptes et confidentialité : création sur la page Mon compte et mot de passe choisi par le client). Pages Me connecter / M'inscrire, Récupérer mon mot de passe et Mon compte refaites comme les maquettes. Mon compte : informations personnelles (civilité, nom, prénom, téléphone, adresse, enregistrées comme adresse de facturation pour pré-remplir la commande), changement d'identifiant et de mot de passe, déconnexion. Icône Mon compte dans l'en-tête et lien dans le menu burger.
+- **Remarques :** commit 2133ef1. Nouveaux templates woocommerce/myaccount/form-login.php, form-lost-password.php et dashboard.php. Fichiers vérifiés avant la mise en prod (git show) pour éviter une coupure par iCloud.
