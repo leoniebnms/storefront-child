@@ -119,3 +119,8 @@ rm ~/sae301-dev.sql
 
 - **Mis en prod :** paiements "Virement" et "Paiement au retrait", zone d'expédition en France avec "Retrait en boutique" gratuit et "Livraison à domicile" 6,90 €, page Panier comme la maquette avec tableau, quantité − 1 +, bloc Réception, bloc Total + bouton panier sticky sur la page d'accueil et la page produit.
 - **Remarques :** commit b93aa96. Pages Panier et Commande passées en shortcodes classiques ([woocommerce_cart], [woocommerce_checkout]) pour pouvoir les personnaliser. Template woocommerce/cart/cart-totals.php surchargé. Extension Packlink PRO désactivée.
+
+### 20/10/2026 – IT 6 : Checkout
+
+- **Mis en prod :** bloc « Instructions pour le retrait » sur la page de commande (texte modifiable dans WooCommerce -> Réglages -> Général -> Click & Collect). Pages Commande et Confirmation faites comme les maquettes : formulaire dans l'ordre de la maquette, paiement dans le cadre de gauche, récapitulatif « Votre panier », bouton "Payer XX €", page Confirmation avec récap, numéro de commande, instructions et compte à rebours.
+- **Remarques :** commits 1020829 et 6c7539d. Nouveau template woocommerce/checkout/thankyou.php. Le fichier avait été coupé par iCloud au premier commit (erreur critique en prod sur la page de confirmation, trouvée en activant WP_DEBUG), corrigé par un second commit.
