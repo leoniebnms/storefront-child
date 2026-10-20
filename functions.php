@@ -60,7 +60,7 @@ function watsons_social_icons() {
 	echo '<div class="watsons-social">';
 	foreach ( $liens as $nom => $lien ) {
 		printf(
-			'<a href="%1$s" aria-label="%2$s" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true">%3$s</svg></a>',
+			'<a class="watsons-social__lien" href="%1$s" aria-label="%2$s" target="_blank" rel="noopener"><svg class="watsons-social__icone" viewBox="0 0 24 24" aria-hidden="true">%3$s</svg></a>',
 			esc_url( $lien[0] ),
 			esc_attr( $nom ),
 			$lien[1]
@@ -92,7 +92,7 @@ function watsons_footer_contact() {
 
 			<a class="watsons-contact__bouton" href="https://www.google.com/maps/search/?api=1&amp;query=17+rue+Saint-Front+24000+P%C3%A9rigueux" target="_blank" rel="noopener">
 				Venir au Watson's Pub
-				<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 11.5 21 3l-8.5 19-2.3-8.2L2 11.5z"/></svg>
+				<svg class="watsons-contact__icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 11.5 21 3l-8.5 19-2.3-8.2L2 11.5z"/></svg>
 			</a>
 		</div>
 	</section>
@@ -119,8 +119,8 @@ function watsons_footer_bas() {
 		?>
 		<p class="watsons-copyright">
 			<?php echo esc_html( date( 'Y' ) ); ?> - Tous droits réservés Watson's Pub -
-			<a href="#">Mentions légales</a> -
-			<a href="#">Politique de confidentialité</a>
+			<a class="watsons-copyright__lien" href="#">Mentions légales</a> -
+			<a class="watsons-copyright__lien" href="#">Politique de confidentialité</a>
 			<span class="watsons-copyright__sep">|</span>
 			Réalisation : Léonie Beau-Nimis
 		</p>
@@ -172,12 +172,12 @@ function watsons_carte( $args = array() ) {
 
 		<?php /* Les filtres : des boutons qui affichent ou masquent les catégories */ ?>
 		<div class="carte-filtres" role="group" aria-label="Filtrer la carte">
-			<button type="button" class="carte-filtres__lien<?php echo $active ? '' : ' is-active'; ?>"
+			<button type="button" class="carte-filtres__lien<?php echo $active ? '' : ' carte-filtres__lien--actif'; ?>"
 				data-filtre="tout" aria-pressed="<?php echo $active ? 'false' : 'true'; ?>">Tout</button>
 
 			<?php foreach ( $categories as $categorie ) : ?>
 				<?php $est_active = ( $active === $categorie->slug ); ?>
-				<button type="button" class="carte-filtres__lien<?php echo $est_active ? ' is-active' : ''; ?>"
+				<button type="button" class="carte-filtres__lien<?php echo $est_active ? ' carte-filtres__lien--actif' : ''; ?>"
 					data-filtre="<?php echo esc_attr( $categorie->slug ); ?>"
 					aria-pressed="<?php echo $est_active ? 'true' : 'false'; ?>">
 					<?php echo esc_html( $categorie->name ); ?>
@@ -251,7 +251,7 @@ function watsons_carte( $args = array() ) {
 				var filtre = bouton.dataset.filtre;
 
 				boutons.forEach( function ( b ) {
-					b.classList.toggle( 'is-active', b === bouton );
+					b.classList.toggle( 'carte-filtres__lien--actif', b === bouton );
 					b.setAttribute( 'aria-pressed', b === bouton ? 'true' : 'false' );
 				} );
 
@@ -298,14 +298,14 @@ add_action( 'init', function () {
 // Lien "Retour à la carte" au-dessus du produit : il ramène à la carte de la page d'accueil.
 add_action( 'woocommerce_before_single_product', function () {
 	printf(
-		'<a class="retour-carte" href="%s"><svg viewBox="0 0 9 14" aria-hidden="true"><path d="M8 1 2 7l6 6"/></svg>Retour à la carte</a>',
+		'<a class="retour-carte" href="%s"><svg class="retour-carte__icone" viewBox="0 0 9 14" aria-hidden="true"><path d="M8 1 2 7l6 6"/></svg>Retour à la carte</a>',
 		esc_url( home_url( '/#carte' ) )
 	);
 }, 5 );
 
 // Libellé "Quantité" au-dessus du champ de quantité.
 add_action( 'woocommerce_before_add_to_cart_quantity', function () {
-	echo '<span class="produit-quantite__label">Quantité</span>';
+	echo '<span class="produit-quantite">Quantité</span>';
 } );
 
 // Fiche produit : pas de loupe ni de zoom sur la photo.
@@ -316,7 +316,7 @@ add_action( 'after_setup_theme', function () {
 
 // Pas de lien "Modifier" (raccourci admin de Storefront) sur les pages et les fiches produit.
 add_action( 'init', function () {
-	remove_action( 'storefront_page_after', 'storefront_edit_post_link', 30 );
+	remove_action( 'storefront_page', 'storefront_edit_post_link', 30 );
 	remove_action( 'woocommerce_single_product_summary', 'storefront_edit_post_link', 60 );
 } );
 
@@ -374,10 +374,10 @@ add_action( 'woocommerce_after_variations_table', function () {
 	}
 	?>
 	<fieldset class="ingredients-retirer">
-		<legend>Ingrédients à retirer</legend>
+		<legend class="ingredients-retirer__titre">Ingrédients à retirer</legend>
 		<?php foreach ( $ingredients as $ingredient ) : ?>
-			<label>
-				<input type="checkbox" name="ingredients_retires[]" value="<?php echo esc_attr( $ingredient ); ?>">
+			<label class="ingredients-retirer__option">
+				<input class="ingredients-retirer__case" type="checkbox" name="ingredients_retires[]" value="<?php echo esc_attr( $ingredient ); ?>">
 				<?php echo esc_html( $ingredient ); ?>
 			</label>
 		<?php endforeach; ?>
@@ -464,7 +464,7 @@ add_action( 'wp_footer', function () {
 		$formulaire.on( 'found_variation', function ( evenement, variation ) {
 			var prixChoisi = variation.price_html ? $( variation.price_html ).html() : prixDeDepart;
 			var stock = $( '<div>' ).html( variation.availability_html ).text().trim() || 'En stock';
-			var classe = ! variation.is_in_stock ? 'is-epuise' : ( stock === 'Stock faible' ? 'is-faible' : 'is-dispo' );
+			var classe = ! variation.is_in_stock ? 'stock-statut--epuise' : ( stock === 'Stock faible' ? 'stock-statut--faible' : 'stock-statut--dispo' );
 
 			if ( majPrixDuHaut && variation.price_html ) {
 				$prix.html( prixChoisi );
@@ -518,3 +518,109 @@ add_action( 'woocommerce_single_product_summary', function () {
 		echo '<div class="infos-produit">' . $blocs . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput -- déjà échappé ci-dessus.
 	}
 }, 22 );
+
+/** US-5.3 : page Panier comme sur la maquette */
+
+/**
+ * Lien "Continuer ma commande" au-dessus du titre "Votre panier".
+ * Même composant que "Retour à la carte" sur la fiche produit.
+ */
+add_action( 'storefront_page_before', function () {
+	if ( ! is_cart() ) {
+		return;
+	}
+
+	printf(
+		'<a class="retour-carte" href="%s"><svg class="retour-carte__icone" viewBox="0 0 9 14" aria-hidden="true"><path d="M8 1 2 7l6 6"/></svg>Continuer ma commande</a>',
+		esc_url( home_url( '/#carte' ) )
+	);
+} );
+
+/**
+ * Boutons − et + autour du champ Quantité, et mise à jour automatique du panier
+ * (il n'y a pas de bouton "Mettre à jour le panier" sur la maquette).
+ */
+add_action( 'wp_footer', function () {
+	if ( ! is_cart() ) {
+		return;
+	}
+	?>
+	<script>
+	jQuery( function ( $ ) {
+		var minuteur;
+
+		// Ajoute les boutons − et + (à refaire après chaque mise à jour du panier).
+		function ajouterBoutons() {
+			$( '.woocommerce-cart-form .quantity' ).each( function () {
+				var $bloc = $( this );
+				var $champ = $bloc.find( '.qty' );
+
+				if ( $bloc.hasClass( 'quantite' ) || ! $champ.length || $champ.attr( 'type' ) === 'hidden' ) {
+					return;
+				}
+
+				$bloc.addClass( 'quantite' );
+				$champ.addClass( 'quantite__champ' );
+				$( '<button type="button" class="quantite__bouton quantite__bouton--moins" aria-label="Enlever un">−</button>' ).insertBefore( $champ );
+				$( '<button type="button" class="quantite__bouton quantite__bouton--plus" aria-label="Ajouter un">+</button>' ).insertAfter( $champ );
+			} );
+		}
+
+		// Clique (en caché) sur le bouton "Mettre à jour le panier" de WooCommerce.
+		function mettreAJourPanier() {
+			clearTimeout( minuteur );
+			minuteur = setTimeout( function () {
+				$( '.woocommerce-cart-form [name="update_cart"]' ).prop( 'disabled', false ).trigger( 'click' );
+			}, 500 );
+		}
+
+		$( document.body ).on( 'click', '.quantite__bouton', function () {
+			var $champ = $( this ).siblings( '.qty' );
+			var quantite = parseInt( $champ.val(), 10 ) || 1;
+			var maximum = parseInt( $champ.attr( 'max' ), 10 );
+
+			quantite += $( this ).hasClass( 'quantite__bouton--plus' ) ? 1 : -1;
+
+			// Minimum 1 : pour retirer un produit, on utilise la croix.
+			if ( quantite < 1 ) {
+				quantite = 1;
+			}
+			if ( maximum > 0 && quantite > maximum ) {
+				quantite = maximum;
+			}
+
+			$champ.val( quantite ).trigger( 'change' );
+			mettreAJourPanier();
+		} );
+
+		// Si le visiteur tape la quantité au clavier.
+		$( document.body ).on( 'input', '.woocommerce-cart-form .qty', mettreAJourPanier );
+
+		ajouterBoutons();
+		$( document.body ).on( 'updated_wc_div', ajouterBoutons );
+	} );
+	</script>
+	<?php
+} );
+
+/** Bouton panier sticky : toujours visible en bas à droite de l'écran, pour consulter son panier à tout moment. */
+add_action( 'wp_footer', function () {
+	// Pas besoin du bouton quand on est déjà sur le panier ou la commande.
+	if ( ! function_exists( 'WC' ) || is_cart() || is_checkout() ) {
+		return;
+	}
+
+	$nombre = WC()->cart ? WC()->cart->get_cart_contents_count() : 0;
+	?>
+	<a class="panier-flottant" href="<?php echo esc_url( wc_get_cart_url() ); ?>"
+		aria-label="<?php echo esc_attr( sprintf( 'Voir mon panier (%d article%s)', $nombre, $nombre > 1 ? 's' : '' ) ); ?>">
+		<svg class="panier-flottant__icone" viewBox="4 2.5 16 19" aria-hidden="true">
+			<path d="M5.5 8h13l-1.2 12.5H6.7L5.5 8z"/>
+			<path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>
+		</svg>
+		<?php if ( $nombre > 0 ) : ?>
+			<span class="panier-flottant__nombre"><?php echo esc_html( $nombre ); ?></span>
+		<?php endif; ?>
+	</a>
+	<?php
+} );

@@ -1,16 +1,21 @@
 /*
 Theme Name: Storefront Child SAE301
 Template: storefront
-Version: 1.2.0
+Version: 1.4.1
 */
 
-/* =========================================================
-   Couleurs et fonts de la maquette
-   ========================================================= */
+/* Couleurs et fonts de la maquette */
 :root {
-  --rouille: #b03a1b;
+  --rouille: #b03d1a;
   --noir: #000;
   --blanc: #fff;
+  --orange: #c97a00;
+  --gris-fonce: #2a2a2a;
+  --gris: #8c8c8c;
+  --gris-bordure: #999;
+  --gris-clair: #ccc;
+  --gris-entete: #e2e2e2;
+  --gris-fond: #f3f3f3;
   --font-grand-titre: "Tall Dark And Handsome", "Oswald", sans-serif;
   --font-titre: "Oswald", sans-serif;
   --font-texte: "Lato", sans-serif;
@@ -26,22 +31,23 @@ Version: 1.2.0
 
 body {
   font-family: var(--font-texte);
+  color: var(--noir);
 }
 
 .site-header {
   background: var(--blanc);
   border-bottom: 0;
-  padding: 14px 0;
+  padding: 0.88rem 0;
   margin-bottom: 0;
 }
 
 .site-header .col-full {
-  max-width: 1140px;
-  padding-left: 20px;
-  padding-right: 20px;
+  max-width: 71.25rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .site-header .col-full::before,
@@ -58,13 +64,13 @@ body {
 }
 
 .site-header .custom-logo-link img {
-  max-height: 45px;
+  max-height: 2.81rem;
   width: auto;
 }
 
 .site-header .site-title {
   font-family: var(--font-titre);
-  font-size: 26px;
+  font-size: 1.63rem;
   margin: 0;
   text-transform: uppercase;
 }
@@ -89,13 +95,13 @@ body {
 /* Icônes sociales */
 .watsons-social {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   flex-shrink: 0;
 }
 
-.watsons-social a {
-  width: 22px;
-  height: 22px;
+.watsons-social__lien {
+  width: 1.38rem;
+  height: 1.38rem;
   border-radius: 50%;
   background: var(--noir);
   display: flex;
@@ -103,17 +109,17 @@ body {
   justify-content: center;
 }
 
-.watsons-social a:hover {
+.watsons-social__lien:hover {
   background: var(--rouille);
 }
 
-.watsons-social svg {
-  width: 13px;
-  height: 13px;
+.watsons-social__icone {
+  width: 0.81rem;
+  height: 0.81rem;
   fill: var(--blanc);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
   /* Le menu prend la place libre et se cale à droite */
   .site-header .main-navigation {
     flex: 1 1 auto;
@@ -150,10 +156,10 @@ body {
   .site-header .main-navigation .primary-navigation ul.menu > li > a {
     font-family: var(--font-titre);
     font-weight: 300;
-    font-size: 15px;
+    font-size: 0.94rem;
     text-transform: uppercase;
     color: var(--noir);
-    padding: 8px 5px;
+    padding: 0.5rem 0.31rem;
   }
 
   .site-header .main-navigation .primary-navigation ul.menu > li > a:hover,
@@ -172,7 +178,7 @@ body {
     .primary-navigation
     ul.menu
     > li.menu-commander {
-    margin-left: 6px;
+    margin-left: 0.38rem;
   }
 
   .site-header
@@ -184,7 +190,7 @@ body {
     background: var(--rouille);
     color: var(--blanc);
     font-weight: 300;
-    padding: 8px 12px;
+    padding: 0.5rem 0.75rem;
   }
 
   .site-header
@@ -199,14 +205,14 @@ body {
 }
 
 /* Écrans moyens (petits portables, tablettes) : menu un peu plus petit */
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 48rem) and (max-width: 63.94rem) {
   .site-header .col-full {
-    gap: 10px;
+    gap: 0.63rem;
   }
 
   .site-header .main-navigation .primary-navigation ul.menu > li > a {
-    font-size: 13px;
-    padding: 6px 3px;
+    font-size: 0.81rem;
+    padding: 0.38rem 0.19rem;
   }
 
   .site-header
@@ -215,14 +221,14 @@ body {
     ul.menu
     > li.menu-commander
     > a {
-    padding: 6px 8px;
+    padding: 0.38rem 0.5rem;
   }
 }
 
 /* Pour afficher le menu burger à gauche et le logo à droite */
-@media (max-width: 767px) {
+@media (max-width: 47.94rem) {
   .site-header {
-    padding: 20px 0;
+    padding: 1.25rem 0;
   }
 
   .site-header .col-full {
@@ -239,7 +245,7 @@ body {
   }
 
   .site-header .custom-logo-link img {
-    max-height: 50px;
+    max-height: 3.13rem;
   }
 
   .watsons-social {
@@ -250,8 +256,8 @@ body {
   .site-header button.menu-toggle {
     float: none;
     position: relative;
-    width: 32px;
-    height: 26px;
+    width: 2rem;
+    height: 1.63rem;
     margin: 0;
     padding: 0;
     border: 0;
@@ -266,8 +272,8 @@ body {
     content: "";
     position: absolute;
     left: 0;
-    width: 32px;
-    height: 3px;
+    width: 2rem;
+    height: 0.19rem;
     margin: 0;
     background: var(--noir);
     border-radius: 0;
@@ -278,25 +284,25 @@ body {
   }
 
   .site-header button.menu-toggle::before {
-    top: 1px;
+    top: 0.06rem;
   }
 
   .site-header button.menu-toggle span::before {
-    top: 11px;
+    top: 0.69rem;
   }
 
   .site-header button.menu-toggle::after {
-    top: 21px;
+    top: 1.31rem;
   }
 
   /* Burger ouvert : les traits forment une croix */
   .site-header .toggled button.menu-toggle::before {
-    top: 11px;
+    top: 0.69rem;
     transform: rotate(45deg);
   }
 
   .site-header .toggled button.menu-toggle::after {
-    top: 11px;
+    top: 0.69rem;
     transform: rotate(-45deg);
   }
 
@@ -307,7 +313,7 @@ body {
   /* Menu déroulé sous l'en-tête */
   .site-header .handheld-navigation {
     position: absolute;
-    top: calc(100% + 20px);
+    top: calc(100% + 1.25rem);
     left: 0;
     right: 0;
     z-index: 99;
@@ -317,10 +323,10 @@ body {
   .site-header .handheld-navigation ul.menu li a {
     font-family: var(--font-titre);
     font-weight: 300;
-    font-size: 18px;
+    font-size: 1.13rem;
     text-transform: uppercase;
     color: var(--noir);
-    padding: 12px 16px;
+    padding: 0.75rem 1rem;
   }
 
   .site-header .handheld-navigation ul.menu li.menu-commander a {
@@ -331,7 +337,7 @@ body {
 
 /* Pour le footer */
 .watsons-contact {
-  background-color: #2a2a2a;
+  background-color: var(--gris-fonce);
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
     var(--photo-contact, none);
@@ -339,11 +345,11 @@ body {
   background-position: center;
   color: var(--blanc);
   text-align: center;
-  padding: 90px 20px;
+  padding: 5.63rem 1.25rem;
 }
 
 .watsons-contact__inner {
-  max-width: 700px;
+  max-width: 43.75rem;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -354,12 +360,13 @@ body {
 .watsons-sep {
   display: block;
   position: relative;
-  width: 170px;
-  height: 20px;
+  width: 10.63rem;
+  height: 1.25rem;
   margin: 0 auto;
   background:
-    linear-gradient(var(--blanc), var(--blanc)) left center / 65px 2px no-repeat,
-    linear-gradient(var(--blanc), var(--blanc)) right center / 65px 2px
+    linear-gradient(var(--blanc), var(--blanc)) left center / 4.06rem 0.13rem
+      no-repeat,
+    linear-gradient(var(--blanc), var(--blanc)) right center / 4.06rem 0.13rem
       no-repeat;
 }
 
@@ -369,9 +376,9 @@ body {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  font-size: 20px;
+  font-size: 1.25rem;
   line-height: 1;
-  color: #8c8c8c;
+  color: var(--gris);
 }
 
 .watsons-contact__titre {
@@ -379,23 +386,23 @@ body {
   font-weight: 400;
   text-transform: uppercase;
   color: var(--blanc);
-  font-size: clamp(36px, 6vw, 72px);
+  font-size: clamp(2.25rem, 6vw, 4.5rem);
   line-height: 1;
-  margin: 36px 0 24px;
+  margin: 2.25rem 0 1.5rem;
 }
 
 .watsons-contact__texte {
   font-family: var(--font-titre);
   font-weight: 300;
-  font-size: 17px;
-  margin: 0 0 36px;
+  font-size: 1.06rem;
+  margin: 0 0 2.25rem;
 }
 
 .watsons-contact__mail,
 .watsons-contact__tel {
   font-family: var(--font-titre);
   font-weight: 300;
-  font-size: clamp(22px, 3vw, 32px);
+  font-size: clamp(1.38rem, 3vw, 2rem);
   line-height: 1.3;
   color: var(--blanc);
   text-decoration: none;
@@ -403,10 +410,12 @@ body {
 }
 
 .watsons-contact__mail {
-  margin-top: 36px;
+  margin-top: 2.25rem;
 }
 
-.watsons-contact a:hover {
+.watsons-contact__mail:hover,
+.watsons-contact__tel:hover,
+.watsons-contact__bouton:hover {
   color: var(--blanc);
   opacity: 0.8;
 }
@@ -414,38 +423,34 @@ body {
 .watsons-contact__adresse {
   font-family: var(--font-titre);
   font-weight: 300;
-  font-size: clamp(17px, 2vw, 22px);
+  font-size: clamp(1.06rem, 2vw, 1.38rem);
   text-transform: uppercase;
-  border-bottom: 1px solid var(--blanc);
-  margin: 32px 0 30px;
-  padding-bottom: 2px;
+  border-bottom: 0.06rem solid var(--blanc);
+  margin: 2rem 0 1.88rem;
+  padding-bottom: 0.13rem;
 }
 
 .watsons-contact__bouton {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  border: 1px solid var(--blanc);
-  padding: 8px 16px;
+  gap: 0.63rem;
+  border: 0.06rem solid var(--blanc);
+  padding: 0.5rem 1rem;
   font-family: var(--font-titre);
   font-weight: 300;
-  font-size: 17px;
+  font-size: 1.06rem;
   text-transform: uppercase;
   color: var(--blanc);
   text-decoration: none;
 }
 
-.watsons-contact__bouton svg {
-  width: 15px;
-  height: 15px;
+.watsons-contact__icone {
+  width: 0.94rem;
+  height: 0.94rem;
   fill: var(--blanc);
 }
 
 /* Texte et titres en noir, plus de violet */
-body {
-  color: var(--noir);
-}
-
 h1,
 h2,
 h3,
@@ -512,7 +517,7 @@ input[type="button"]:hover,
 
 .site-footer {
   background: var(--blanc);
-  padding: 30px 0 20px;
+  padding: 1.88rem 0 1.25rem;
   margin: 0;
 }
 
@@ -522,7 +527,7 @@ input[type="button"]:hover,
 
 .watsons-footer-menu ul {
   list-style: none;
-  margin: 0 0 20px;
+  margin: 0 0 1.25rem;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
@@ -536,14 +541,14 @@ input[type="button"]:hover,
 /* Petit trait gris entre les liens */
 .watsons-footer-menu li + li::before {
   content: "|";
-  color: #ccc;
-  margin: 0 8px;
+  color: var(--gris-clair);
+  margin: 0 0.5rem;
 }
 
 .watsons-footer-menu a {
   font-family: var(--font-titre);
   font-weight: 300;
-  font-size: 16px;
+  font-size: 1rem;
   text-transform: uppercase;
   color: var(--noir);
   text-decoration: none;
@@ -559,51 +564,51 @@ input[type="button"]:hover,
 }
 
 .watsons-copyright {
-  font-size: 13px;
+  font-size: 0.81rem;
   color: var(--noir);
   margin: 0;
 }
 
-.watsons-copyright a {
+.watsons-copyright__lien {
   color: var(--noir);
   text-decoration: none;
 }
 
-.watsons-copyright a:hover {
+.watsons-copyright__lien:hover {
   color: var(--rouille);
 }
 
 .watsons-copyright__sep {
-  color: #ccc;
-  margin: 0 6px;
+  color: var(--gris-clair);
+  margin: 0 0.38rem;
 }
 
 /* Mobile : tout plus petit, comme sur la maquette mobile */
-@media (max-width: 767px) {
+@media (max-width: 47.94rem) {
   .watsons-contact {
-    padding: 60px 20px;
+    padding: 3.75rem 1.25rem;
   }
 
   .watsons-contact__texte {
-    font-size: 15px;
+    font-size: 0.94rem;
   }
 
   .watsons-footer-menu a {
-    font-size: 11px;
+    font-size: 0.69rem;
   }
 
   .watsons-footer-menu li + li::before {
-    margin: 0 4px;
+    margin: 0 0.25rem;
   }
 
   .watsons-copyright {
-    font-size: 9px;
+    font-size: 0.56rem;
   }
 }
 
 /*  US-2.3 : Afficher la carte avec les bonnes couleurs, les bonnes typos, ... comme sur la maquette*/
 .carte {
-  padding: 20px 0 60px;
+  padding: 1.25rem 0 3.75rem;
 }
 
 /* Grand titre LA CARTE */
@@ -612,38 +617,44 @@ input[type="button"]:hover,
   font-weight: normal;
   letter-spacing: normal;
   text-transform: uppercase;
-  font-size: 72px;
+  font-size: 4.5rem;
   line-height: 1;
-  margin: 0 0 40px;
+  margin: 0 0 2.5rem;
 }
 
 /* Filtres TOUT / BURGERS / BOISSONS / DESSERTS */
 .carte-filtres {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 50px;
+  gap: 1rem;
+  margin-bottom: 3.13rem;
 }
 
 .carte-filtres__lien {
-  min-width: 82px;
-  padding: 10px 14px;
-  border: 1px solid var(--noir);
+  min-width: 5.13rem;
+  padding: 0.63rem 0.88rem;
+  background: transparent;
+  border: 0.06rem solid var(--noir);
+  border-radius: 0;
   font-family: var(--font-titre);
   font-weight: 400;
-  font-size: 13px;
+  font-size: 0.81rem;
   text-transform: uppercase;
   text-align: center;
   text-decoration: none;
   color: var(--noir);
+  cursor: pointer;
 }
 
 .carte-filtres__lien:hover {
+  background: transparent;
   border-color: var(--rouille);
   color: var(--rouille);
 }
 
-.carte-filtres__lien.is-active {
+/* Filtres : encadrés de noir, et rouille seulement pour le filtre actif */
+.carte-filtres__lien--actif,
+.carte-filtres__lien--actif:hover {
   background: var(--rouille);
   border-color: var(--rouille);
   color: var(--blanc);
@@ -653,18 +664,18 @@ input[type="button"]:hover,
 .carte-categories {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  column-gap: 50px;
-  row-gap: 50px;
+  column-gap: 3.13rem;
+  row-gap: 3.13rem;
   align-items: start;
 }
 
 .carte-categorie__titre {
   font-family: var(--font-titre);
   font-weight: 400;
-  font-size: 28px;
+  font-size: 1.75rem;
   text-transform: uppercase;
   color: var(--rouille);
-  margin: 0 0 10px;
+  margin: 0 0 0.63rem;
 }
 
 /* Une ligne produit : nom | prix | bouton, et la description dessous */
@@ -674,35 +685,36 @@ input[type="button"]:hover,
   grid-template-areas:
     "nom  prix bouton"
     "desc .    .";
-  column-gap: 14px;
+  column-gap: 0.88rem;
   align-items: center;
-  padding: 26px 0;
-  border-bottom: 2px dotted var(--noir);
+  padding: 1.63rem 0;
+  border-bottom: 0.13rem dotted var(--noir);
 }
 
 .carte-produit__nom {
   grid-area: nom;
   font-family: var(--font-titre);
   font-weight: 400;
-  font-size: 28px;
+  font-size: 1.75rem;
   text-transform: uppercase;
   margin: 0;
 }
 
-.carte-produit__nom a {
+/* Pour retirer le soulignement des noms de produits */
+.carte .carte-produit__nom a:not(.button):not(.components-button) {
   color: var(--noir);
   text-decoration: none;
 }
 
-.carte-produit__nom a:hover {
+.carte .carte-produit__nom a:not(.button):not(.components-button):hover {
   color: var(--rouille);
 }
 
 .carte-produit__desc {
   grid-area: desc;
   font-family: var(--font-texte);
-  font-size: 12px;
-  margin-top: 10px;
+  font-size: 0.75rem;
+  margin-top: 0.63rem;
 }
 
 .carte-produit__desc p {
@@ -713,7 +725,7 @@ input[type="button"]:hover,
   grid-area: prix;
   font-family: var(--font-titre);
   font-weight: 300;
-  font-size: 18px;
+  font-size: 1.13rem;
   color: var(--rouille);
   white-space: nowrap;
 }
@@ -726,9 +738,9 @@ input[type="button"]:hover,
   grid-area: bouton;
   font-family: var(--font-titre);
   font-weight: 300;
-  font-size: 13px;
+  font-size: 0.81rem;
   text-transform: uppercase;
-  padding: 10px 20px;
+  padding: 0.63rem 1.25rem;
   white-space: nowrap;
 }
 
@@ -739,55 +751,50 @@ input[type="button"]:hover,
 }
 
 /* Mobile : une seule colonne, filtres sur toute la largeur */
-@media (max-width: 767px) {
+@media (max-width: 47.94rem) {
   .carte__titre {
-    font-size: 48px;
-    margin-bottom: 24px;
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
   }
 
   .carte-filtres {
-    gap: 8px;
-    margin-bottom: 36px;
+    gap: 0.5rem;
+    margin-bottom: 2.25rem;
   }
 
   .carte-filtres__lien {
     flex: 1;
     min-width: 0;
-    padding: 12px 4px;
+    padding: 0.75rem 0.25rem;
   }
 
   .carte-categories {
     grid-template-columns: 1fr;
-    row-gap: 36px;
+    row-gap: 2.25rem;
   }
 
   .carte-produit {
     grid-template-areas:
       "nom  prix bouton"
       "desc desc desc";
-    padding: 20px 0;
+    padding: 1.25rem 0;
   }
 
   .carte-produit__nom {
-    font-size: 16px;
+    font-size: 1rem;
   }
 
   .carte-produit__desc {
-    font-size: 13px;
+    font-size: 0.81rem;
   }
 
   .carte-produit__prix {
-    font-size: 15px;
+    font-size: 0.94rem;
   }
 
   .carte-produit__bouton.button {
-    padding: 10px 14px;
+    padding: 0.63rem 0.88rem;
   }
-}
-
-/* Pour retirer le soulignement des noms de produits */
-.carte .carte-produit__nom a:not(.button):not(.components-button) {
-  text-decoration: none;
 }
 
 /* Défilement en douceur vers l'ancre #carte */
@@ -800,43 +807,21 @@ html {
   display: none;
 }
 
-/* Filtres : encadrés de noir, et rouille seulement pour le filtre actif */
-.carte .carte-filtres__lien {
-  background: transparent;
-  border: 1px solid var(--noir);
-  border-radius: 0;
-  color: var(--noir);
-  cursor: pointer;
-}
-
-.carte .carte-filtres__lien:hover {
-  background: transparent;
-  border-color: var(--rouille);
-  color: var(--rouille);
-}
-
-.carte .carte-filtres__lien.is-active,
-.carte .carte-filtres__lien.is-active:hover {
-  background: var(--rouille);
-  border-color: var(--rouille);
-  color: var(--blanc);
-}
-
 /* US-2.4 : fiche produit */
 .retour-carte {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.63rem;
   font-family: var(--font-texte);
-  font-size: 15px;
+  font-size: 0.94rem;
   color: var(--noir);
   text-decoration: none;
-  margin-bottom: 30px;
+  margin-bottom: 1.88rem;
 }
 
-.retour-carte svg {
-  width: 9px;
-  height: 14px;
+.retour-carte__icone {
+  width: 0.56rem;
+  height: 0.88rem;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.5;
@@ -852,14 +837,14 @@ html {
   font-weight: 400;
   letter-spacing: normal;
   text-transform: uppercase;
-  font-size: 40px;
+  font-size: 2.5rem;
   line-height: 1.1;
-  margin: 0 0 12px;
+  margin: 0 0 0.75rem;
 }
 
 .single-product div.product .woocommerce-product-details__short-description {
-  font-size: 16px;
-  margin-bottom: 30px;
+  font-size: 1rem;
+  margin-bottom: 1.88rem;
 }
 
 .single-product div.product .woocommerce-product-details__short-description p {
@@ -870,12 +855,12 @@ html {
 .single-product div.product p.price .amount {
   font-family: var(--font-titre);
   font-weight: 400;
-  font-size: 28px;
+  font-size: 1.75rem;
   color: var(--noir);
 }
 
 .single-product div.product p.price {
-  margin-bottom: 30px;
+  margin-bottom: 1.88rem;
 }
 
 /* Quantité + bouton côte à côte, libellé au-dessus */
@@ -883,7 +868,7 @@ html {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
-  gap: 6px;
+  gap: 0.38rem;
   padding: 0;
 }
 
@@ -892,10 +877,10 @@ html {
   display: none;
 }
 
-.produit-quantite__label {
+.produit-quantite {
   width: 100%;
-  font-size: 15px;
-  margin-bottom: 8px;
+  font-size: 0.94rem;
+  margin-bottom: 0.5rem;
 }
 
 .single-product div.product form.cart .quantity {
@@ -904,48 +889,49 @@ html {
 }
 
 .single-product div.product form.cart .quantity .qty {
-  width: 90px;
+  width: 5.63rem;
   height: 100%;
-  min-height: 45px;
-  border: 1px solid var(--noir);
+  min-height: 2.81rem;
+  border: 0.06rem solid var(--noir);
   background: var(--blanc);
   box-shadow: none;
   text-align: center;
-  font-size: 15px;
+  font-size: 0.94rem;
+  -moz-appearance: textfield;
 }
 
 .single-product div.product form.cart .button {
   float: none;
   margin: 0;
-  padding: 12px 18px;
-  font-size: 15px;
+  padding: 0.75rem 1.13rem;
+  font-size: 0.94rem;
 }
 
 /* Mobile : petite photo à gauche, titre et prix à côté, panier dessous */
-@media (max-width: 767px) {
+@media (max-width: 47.94rem) {
   .single-product div.product .woocommerce-product-gallery {
     float: left;
     width: 40%;
-    margin: 0 16px 20px 0;
+    margin: 0 1rem 1.25rem 0;
   }
 
   .single-product div.product .product_title.entry-title {
-    font-size: 30px;
+    font-size: 1.88rem;
   }
 
   .single-product div.product .woocommerce-product-details__short-description {
-    font-size: 14px;
-    margin-bottom: 8px;
+    font-size: 0.88rem;
+    margin-bottom: 0.5rem;
   }
 
   .single-product div.product p.price,
   .single-product div.product p.price .amount {
-    font-size: 16px;
+    font-size: 1rem;
   }
 
   .single-product div.product form.cart {
     clear: both;
-    padding-top: 10px;
+    padding-top: 0.63rem;
   }
 }
 
@@ -968,10 +954,6 @@ html {
   margin: 0;
 }
 
-.single-product div.product form.cart .qty {
-  -moz-appearance: textfield;
-}
-
 /* Photo du produit non cliquable */
 .woocommerce-product-gallery__image a {
   pointer-events: none;
@@ -992,7 +974,7 @@ html {
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
-  gap: 6px;
+  gap: 0.38rem;
 }
 
 .single-product div.product .woocommerce-variation-add-to-cart .button {
@@ -1021,19 +1003,19 @@ html {
 }
 
 .single-product div.product table.variations {
-  margin: 0 0 6px;
+  margin: 0 0 0.38rem;
 }
 
 .single-product div.product table.variations th.label label {
   display: block;
-  margin: 0 0 8px;
+  margin: 0 0 0.5rem;
   font-family: var(--font-texte);
   font-weight: 400;
-  font-size: 15px;
+  font-size: 0.94rem;
 }
 
 .single-product div.product table.variations td.value {
-  margin-bottom: 22px;
+  margin-bottom: 1.38rem;
 }
 
 /* Listes Sauce et Taille : grand cadre noir avec une petite flèche */
@@ -1041,17 +1023,17 @@ html {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  max-width: 365px;
-  height: 45px;
-  padding: 0 40px 0 14px;
-  border: 1px solid var(--noir);
+  max-width: 22.81rem;
+  height: 2.81rem;
+  padding: 0 2.5rem 0 0.88rem;
+  border: 0.06rem solid var(--noir);
   border-radius: 0;
   background: var(--blanc)
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23000' stroke-width='1.2'/%3E%3C/svg%3E")
-    no-repeat right 14px center / 12px 8px;
+    no-repeat right 0.88rem center / 0.75rem 0.5rem;
   box-shadow: none;
   font-family: var(--font-texte);
-  font-size: 15px;
+  font-size: 0.94rem;
   color: var(--noir);
   cursor: pointer;
 }
@@ -1065,56 +1047,52 @@ html {
 .ingredients-retirer {
   border: 0;
   padding: 0;
-  margin: 0 0 22px;
+  margin: 0 0 1.38rem;
 }
 
-.ingredients-retirer legend {
+.ingredients-retirer__titre {
   padding: 0;
-  margin: 0 0 8px;
-  font-size: 15px;
+  margin: 0 0 0.5rem;
+  font-size: 0.94rem;
 }
 
-.ingredients-retirer label {
+.single-product div.product .ingredients-retirer__option {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin: 0 22px 6px 0;
-  font-size: 15px;
+  gap: 0.5rem;
+  margin: 0 1.38rem 0.38rem 0;
+  font-size: 0.94rem;
   cursor: pointer;
 }
 
-.ingredients-retirer input[type="checkbox"] {
+.single-product div.product .ingredients-retirer__case {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 1.13rem;
+  height: 1.13rem;
   margin: 0;
-  border: 1px solid #999;
+  border: 0.06rem solid var(--gris-bordure);
   border-radius: 0;
   background: var(--blanc);
   cursor: pointer;
 }
 
-.ingredients-retirer input[type="checkbox"]:checked {
+.single-product div.product .ingredients-retirer__case:checked {
   background: var(--rouille);
   border-color: var(--rouille);
 }
 
 /* Ligne "Prix sélectionné : 15,00 € - En stock" */
 .prix-selectionne {
-  margin: 0 0 22px;
-  font-size: 15px;
+  margin: 0 0 1.38rem;
+  font-size: 0.94rem;
 }
 
-.prix-selectionne strong .amount {
-  font-weight: 700;
+.stock-statut--faible {
+  color: var(--orange);
 }
 
-.stock-statut.is-faible {
-  color: #c97a00;
-}
-
-.stock-statut.is-epuise {
+.stock-statut--epuise {
   color: var(--rouille);
 }
 
@@ -1125,22 +1103,22 @@ html {
 
 /* Ingrédients à retirer : pas de fond gris (style Storefront des fieldset) */
 .single-product div.product .ingredients-retirer,
-.single-product div.product .ingredients-retirer legend {
+.single-product div.product .ingredients-retirer__titre {
   background: transparent;
 }
 
-.single-product div.product .ingredients-retirer legend {
+.single-product div.product .ingredients-retirer__titre {
   font-weight: 400;
 }
 
 /* US-4.3 : informations produit (Composition, Allergènes, Valeurs nutritionnelles) dans un menu dépliant */
 .infos-produit {
-  margin: 0 0 26px;
-  border-top: 2px dotted var(--noir);
+  margin: 0 0 1.63rem;
+  border-top: 0.13rem dotted var(--noir);
 }
 
 .infos-produit__bloc {
-  border-bottom: 2px dotted var(--noir);
+  border-bottom: 0.13rem dotted var(--noir);
 }
 
 /* Le titre cliquable */
@@ -1148,10 +1126,10 @@ html {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
+  padding: 0.75rem 0;
   font-family: var(--font-titre);
   font-weight: 400;
-  font-size: 16px;
+  font-size: 1rem;
   text-transform: uppercase;
   color: var(--rouille);
   cursor: pointer;
@@ -1166,7 +1144,7 @@ html {
 /* Un "+" à droite, qui devient "−" quand c'est ouvert */
 .infos-produit__titre::after {
   content: "+";
-  font-size: 22px;
+  font-size: 1.38rem;
   line-height: 1;
 }
 
@@ -1181,13 +1159,487 @@ html {
 /* Le contenu, visible une fois déplié */
 .infos-produit__texte {
   margin: 0;
-  padding: 0 0 14px;
-  font-size: 14px;
+  padding: 0 0 0.88rem;
+  font-size: 0.88rem;
   line-height: 1.6;
 }
 
-/* Photo du produit non cliquable */
-.woocommerce-product-gallery__image a {
-  pointer-events: none;
-  cursor: default;
+/* US-5.3 : page Panier comme sur la maquette */
+.woocommerce-cart .woocommerce {
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+.woocommerce-cart .entry-header {
+  text-align: center;
+}
+
+.woocommerce-cart .entry-header .entry-title {
+  font-size: 4.5rem;
+  line-height: 1;
+  margin: 0 0 3rem;
+}
+
+/* Tableau des produits : en-tête gris, une ligne sur deux en gris */
+.woocommerce-cart .woocommerce-cart-form .shop_table {
+  width: 100%;
+  margin: 0 0 3rem;
+  border: 0;
+  border-collapse: collapse;
+}
+
+.woocommerce-cart .woocommerce-cart-form .shop_table thead th {
+  padding: 0.75rem 1rem;
+  background: var(--gris-entete);
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.woocommerce-cart .woocommerce-cart-form .shop_table thead th.product-name {
+  text-align: left;
+}
+
+.woocommerce-cart .woocommerce-cart-form .shop_table tbody td {
+  padding: 1.25rem 1rem;
+  border: 0;
+  background: transparent;
+  vertical-align: top;
+}
+
+.woocommerce-cart
+  .woocommerce-cart-form
+  .shop_table
+  tbody
+  tr.cart_item:nth-child(even) {
+  background: var(--gris-fond);
+}
+
+.woocommerce-cart .woocommerce-cart-form .shop_table td.product-remove {
+  width: 2.5rem;
+}
+
+.woocommerce-cart .woocommerce-cart-form .shop_table td.product-thumbnail {
+  width: 4.5rem;
+}
+
+.woocommerce-cart .woocommerce-cart-form .product-thumbnail img {
+  width: 3.5rem;
+  max-width: none;
+  height: 3.5rem;
+  object-fit: cover;
+  border-radius: 0.25rem;
+}
+
+/* Nom du produit sans soulignement */
+.woocommerce-cart
+  .woocommerce-cart-form
+  .product-name
+  a:not(.button):not(.components-button) {
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-size: 0.94rem;
+  color: var(--noir);
+  text-decoration: none;
+}
+
+.woocommerce-cart
+  .woocommerce-cart-form
+  .product-name
+  a:not(.button):not(.components-button):hover {
+  color: var(--rouille);
+}
+
+/* "Sans :" au-dessus, les ingrédients en dessous */
+.woocommerce-cart .woocommerce-cart-form dl.variation {
+  margin: 0.38rem 0 0;
+}
+
+.woocommerce-cart .woocommerce-cart-form dl.variation dt {
+  float: none;
+  display: block;
+  margin: 0;
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-size: 0.81rem;
+}
+
+.woocommerce-cart .woocommerce-cart-form dl.variation dd,
+.woocommerce-cart .woocommerce-cart-form dl.variation dd p {
+  margin: 0;
+  font-size: 0.75rem;
+}
+
+.woocommerce-cart .woocommerce-cart-form .shop_table td.product-price,
+.woocommerce-cart .woocommerce-cart-form .shop_table td.product-subtotal,
+.woocommerce-cart .woocommerce-cart-form .shop_table td.product-quantity {
+  font-family: var(--font-titre);
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+/* Pas de ligne "Code promo / Mettre à jour le panier" sur la maquette (le panier se met à jour tout seul) */
+.woocommerce-cart .woocommerce-cart-form td.actions {
+  display: none;
+}
+
+/* Quantité : − 1 + */
+.quantite {
+  display: inline-flex;
+  align-items: stretch;
+}
+
+.quantite__bouton {
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--rouille);
+  color: var(--blanc);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.quantite__bouton:hover {
+  background: var(--noir);
+}
+
+.woocommerce-cart .woocommerce-cart-form .quantite .quantite__champ {
+  width: 2.25rem;
+  height: 1.75rem;
+  padding: 0;
+  border: 0.06rem solid var(--gris-clair);
+  border-left: 0;
+  border-right: 0;
+  background: var(--blanc);
+  box-shadow: none;
+  font-size: 0.81rem;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+
+.woocommerce-cart
+  .woocommerce-cart-form
+  .quantite
+  .quantite__champ::-webkit-outer-spin-button,
+.woocommerce-cart
+  .woocommerce-cart-form
+  .quantite
+  .quantite__champ::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Réception et total sur toute la largeur, sous le tableau */
+.woocommerce-cart .cart-collaterals .cart_totals {
+  float: none;
+  width: 100%;
+  margin: 0;
+}
+
+/* Réception : un bouton radio rond par mode, celui choisi encadré en rouille */
+.panier-reception {
+  margin: 0 0 2.5rem;
+}
+
+.panier-reception__titre {
+  margin: 0 0 1rem;
+  font-family: var(--font-grand-titre);
+  font-weight: normal;
+  font-size: 3rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.panier-reception__liste {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panier-reception__option {
+  position: relative;
+  border: 0.06rem solid var(--gris);
+}
+
+.panier-reception__option--actif {
+  border-color: var(--rouille);
+}
+
+.panier-reception__radio {
+  -webkit-appearance: none;
+  appearance: none;
+  position: absolute;
+  top: 50%;
+  left: 1.25rem;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  border: 0.06rem solid var(--gris-bordure);
+  border-radius: 50%;
+  background: var(--blanc);
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.panier-reception__radio:checked {
+  border: 0.31rem solid var(--rouille);
+}
+
+.panier-reception__radio:focus-visible {
+  outline: 0.13rem solid var(--noir);
+  outline-offset: 0.13rem;
+}
+
+.panier-reception__label {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+  padding: 1rem 1.25rem 1rem 3.25rem;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.panier-reception__nom {
+  flex: 1;
+  font-size: 0.94rem;
+}
+
+.panier-reception__adresse {
+  display: block;
+  font-size: 0.81rem;
+}
+
+.panier-reception__prix {
+  font-family: var(--font-titre);
+  font-size: 1rem;
+  color: var(--rouille);
+  white-space: nowrap;
+}
+
+.panier-reception__message {
+  margin: 0;
+  font-size: 0.94rem;
+}
+
+/* Total (TTC) + bouton "Valider le panier" */
+.panier-total {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 0.06rem solid var(--gris);
+}
+
+.panier-total__libelle,
+.panier-total__montant {
+  font-size: 1.25rem;
+}
+
+.panier-total__montant {
+  margin-right: auto;
+}
+
+.panier-total__bouton.button {
+  padding: 1rem 1.75rem;
+  background-color: var(--rouille);
+  border-color: var(--rouille);
+  color: var(--blanc);
+  font-size: 1.13rem;
+  text-align: center;
+}
+
+.panier-total__bouton.button:hover {
+  background-color: var(--noir);
+  border-color: var(--noir);
+  color: var(--blanc);
+}
+
+/* Mobile : chaque produit devient une carte, un seul prix (le sous-total) */
+@media (max-width: 47.94rem) {
+  .woocommerce-cart .entry-header .entry-title {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .woocommerce-cart .woocommerce-cart-form .shop_table thead {
+    display: block;
+  }
+
+  .woocommerce-cart .woocommerce-cart-form .shop_table thead tr {
+    display: flex;
+    justify-content: space-between;
+    background: var(--gris-entete);
+  }
+
+  .woocommerce-cart .woocommerce-cart-form .shop_table thead th {
+    display: none;
+  }
+
+  .woocommerce-cart .woocommerce-cart-form .shop_table thead th.product-name,
+  .woocommerce-cart
+    .woocommerce-cart-form
+    .shop_table
+    thead
+    th.product-subtotal {
+    display: block;
+    background: transparent;
+  }
+
+  .woocommerce-cart .woocommerce-cart-form .shop_table tbody {
+    display: block;
+  }
+
+  .woocommerce-cart .woocommerce-cart-form .shop_table tbody tr.cart_item {
+    display: grid;
+    grid-template-columns: 4rem 1fr auto;
+    grid-template-areas:
+      "photo nom  suppr"
+      "photo qte  total";
+    column-gap: 0.88rem;
+    row-gap: 0.75rem;
+    padding: 1.13rem 1rem;
+  }
+
+  .woocommerce-cart .woocommerce-cart-form .shop_table tbody td {
+    display: block;
+    width: auto;
+    padding: 0;
+    text-align: left;
+  }
+
+  /* Pas de libellés "Prix :", "Quantité :" de Storefront */
+  .woocommerce-cart .woocommerce-cart-form .shop_table tbody td::before {
+    display: none;
+    content: none;
+  }
+
+  .woocommerce-cart .woocommerce-cart-form .shop_table td.product-thumbnail {
+    display: block;
+    grid-area: photo;
+  }
+
+  .woocommerce-cart .woocommerce-cart-form .product-thumbnail img {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .woocommerce-cart .woocommerce-cart-form .shop_table td.product-name {
+    grid-area: nom;
+  }
+
+  .woocommerce-cart .woocommerce-cart-form .shop_table td.product-remove {
+    grid-area: suppr;
+    width: auto;
+    justify-self: end;
+  }
+
+  .woocommerce-cart .woocommerce-cart-form .shop_table td.product-quantity {
+    grid-area: qte;
+    text-align: left;
+  }
+
+  .woocommerce-cart .woocommerce-cart-form .shop_table td.product-subtotal {
+    grid-area: total;
+    align-self: center;
+    font-size: 1rem;
+    text-align: right;
+  }
+
+  .woocommerce-cart .woocommerce-cart-form .shop_table td.product-price,
+  .woocommerce-cart .woocommerce-cart-form .shop_table td.actions {
+    display: none;
+  }
+
+  .panier-reception__titre {
+    font-size: 2rem;
+  }
+
+  /* Bouton "Valider le panier" sur toute la largeur */
+  .panier-total {
+    flex-wrap: wrap;
+    padding: 1.25rem;
+  }
+
+  .panier-total__montant {
+    margin-right: 0;
+    margin-left: auto;
+  }
+
+  .panier-total__bouton.button {
+    flex-basis: 100%;
+  }
+}
+
+/* Bouton panier sticky : carré rouille avec le sac, en bas à droite de l'écran */
+.panier-flottant {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  background: var(--rouille);
+  color: var(--blanc);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.25);
+  text-decoration: none;
+}
+
+.panier-flottant:hover,
+.panier-flottant:focus {
+  background: var(--noir);
+  color: var(--blanc);
+}
+
+.panier-flottant__icone {
+  width: 1.75rem;
+  height: 1.75rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+/* Le nombre d'articles dans un petit rond noir */
+.panier-flottant__nombre {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  box-sizing: border-box;
+  min-width: 1.38rem;
+  height: 1.38rem;
+  padding: 0 0.25rem;
+  border: 0.13rem solid var(--blanc);
+  border-radius: 0.69rem;
+  background: var(--noir);
+  color: var(--blanc);
+  font-family: var(--font-titre);
+  font-size: 0.75rem;
+  line-height: 1.13rem;
+  text-align: center;
+}
+
+/* Mobile : un peu plus petit et plus près du bord */
+@media (max-width: 47.94rem) {
+  .panier-flottant {
+    right: 1rem;
+    bottom: 1rem;
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .panier-flottant__icone {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
 }
