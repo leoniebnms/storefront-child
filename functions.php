@@ -47,7 +47,7 @@ add_action( 'init', function () {
 } );
 
 /**
- * Icônes Facebook, Instagram et TripAdvisor à droite du menu.
+ * Icônes Facebook, Instagram et TripAdvisor à droite du menu, puis l'icône Mon compte.
  * Remplacer les # par les vraies adresses.
  */
 function watsons_social_icons() {
@@ -66,6 +66,12 @@ function watsons_social_icons() {
 			$lien[1]
 		);
 	}
+
+	// US-7.2 : icône "Mon compte", en rouille pour la distinguer des réseaux sociaux.
+	printf(
+		'<a class="watsons-social__lien watsons-social__lien--compte" href="%s" aria-label="Mon compte"><svg class="watsons-social__icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c.8-4 3.6-6 7-6s6.2 2 7 6z"/></svg></a>',
+		esc_url( wc_get_page_permalink( 'myaccount' ) )
+	);
 	echo '</div>';
 }
 
@@ -817,4 +823,138 @@ add_filter( 'woocommerce_cart_shipping_method_full_label', function ( $libelle, 
 /** US-6.2 : page "Commande reçue" (le contenu est dans woocommerce/checkout/thankyou.php). */
 add_filter( 'woocommerce_endpoint_order-received_title', function () {
 	return 'Merci pour votre commande !';
+} );
+
+/** US-7 : compte client */
+
+// Un champ souligné (libellé gris au-dessus), utilisé dans tous les formulaires du compte.
+function watsons_champ_compte( $nom, $libelle, $valeur = '', $type = 'text', $autocomplete = '', $id = '' ) {
+	$id = $id ? $id : $nom;
+
+	printf(
+		'<p class="compte-champ"><label class="compte-champ__libelle" for="%1$s">%2$s</label><input class="compte-champ__saisie input-text" type="%3$s" name="%4$s" id="%1$s" value="%5$s" autocomplete="%6$s"></p>',
+		esc_attr( $id ),
+		esc_html( $libelle ),
+		esc_attr( $type ),
+		esc_attr( $nom ),
+		esc_attr( $valeur ),
+		esc_attr( $autocomplete )
+	);
+}
+
+// Pas de menu à gauche (Tableau de bord, Commandes...) : tout est sur une seule page, comme la maquette.
+add_action( 'init', function () {
+	remove_action( 'woocommerce_account_navigation', 'woocommerce_account_navigation' );
+} );
+
+// Titres des pages : "Me connecter / M'inscrire" et "Recuperer mon mot de passe" (sans accent : la police Tall Dark n'en a pas).
+add_filter( 'the_title', function ( $titre, $id = 0 ) {
+	if ( is_admin() || ! in_the_loop() || ! function_exists( 'is_account_page' ) || ! is_account_page() ) {
+		return $titre;
+	}
+
+	if ( ! is_user_logged_in() && ! is_wc_endpoint_url() && (int) $id === (int) wc_get_page_id( 'myaccount' ) ) {
+		return 'Me connecter / M\'inscrire';
+	}
+
+	return $titre;
+}, 10, 2 );
+
+add_filter( 'woocommerce_endpoint_lost-password_title', function () {
+	return 'Recuperer mon mot de passe';
+} );
+
+// Classes sur la page, pour placer le titre comme sur les maquettes (à gauche pour la connexion, centré sinon).
+add_filter( 'body_class', function ( $classes ) {
+	if ( function_exists( 'is_account_page' ) && is_account_page() && ! is_user_logged_in() ) {
+		$classes[] = is_wc_endpoint_url( 'lost-password' ) ? 'compte-page--mdp' : 'compte-page--connexion';
+	}
+
+	return $classes;
+} );
+
+/**
+ * Formulaire "Informations personnelles" : enregistrement.
+ */
+add_action( 'template_redirect', function () {
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- le nonce est vérifié juste en dessous.
+	if ( empty( $_POST['watsons_infos_perso'] ) || ! is_user_logged_in() ) {
+		return;
+	}
+
+	$nonce = isset( $_POST['watsons-infos-nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['watsons-infos-nonce'] ) ) : '';
+	if ( ! wp_verify_nonce( $nonce, 'watsons_infos_perso' ) ) {
+		return;
+	}
+
+	$valeur = function ( $nom ) {
+		return isset( $_POST[ $nom ] ) ? sanitize_text_field( wp_unslash( $_POST[ $nom ] ) ) : '';
+	};
+	// phpcs:enable
+
+	$civilite    = in_array( $valeur( 'civilite' ), array( 'mme', 'm' ), true ) ? $valeur( 'civilite' ) : '';
+	$nom         = $valeur( 'billing_last_name' );
+	$prenom      = $valeur( 'billing_first_name' );
+	$telephone   = $valeur( 'billing_phone' );
+	$rue         = $valeur( 'billing_address_1' );
+	$code_postal = $valeur( 'billing_postcode' );
+	$ville       = $valeur( 'billing_city' );
+
+	// Vérifications.
+	if ( '' === $nom || '' === $prenom ) {
+		wc_add_notice( 'Le nom et le prénom sont obligatoires.', 'error' );
+	}
+	if ( '' !== $telephone && ! WC_Validation::is_phone( $telephone ) ) {
+		wc_add_notice( 'Le numéro de téléphone n\'est pas valide.', 'error' );
+	}
+	if ( '' !== $code_postal && ! WC_Validation::is_postcode( $code_postal, 'FR' ) ) {
+		wc_add_notice( 'Le code postal n\'est pas valide.', 'error' );
+	}
+	if ( wc_notice_count( 'error' ) > 0 ) {
+		return;
+	}
+
+	// Les infos sont enregistrées comme adresse de facturation : la page Commande sera déjà remplie.
+	$client = new WC_Customer( get_current_user_id() );
+	$client->set_first_name( $prenom );
+	$client->set_last_name( $nom );
+	$client->set_billing_first_name( $prenom );
+	$client->set_billing_last_name( $nom );
+	$client->set_billing_phone( $telephone );
+	$client->set_billing_address_1( $rue );
+	$client->set_billing_postcode( $code_postal );
+	$client->set_billing_city( $ville );
+	if ( ! $client->get_billing_country() ) {
+		$client->set_billing_country( 'FR' );
+	}
+	$client->save();
+
+	update_user_meta( get_current_user_id(), 'watsons_civilite', $civilite );
+
+	wc_add_notice( 'Vos informations personnelles ont été enregistrées.' );
+	wp_safe_redirect( wc_get_page_permalink( 'myaccount' ) );
+	exit;
+} );
+
+// Formulaire "Changer mon identifiant et mon mot de passe" : géré par WooCommerce,
+// seul l'e-mail est obligatoire (le nom et le prénom sont dans l'autre formulaire).
+add_filter( 'woocommerce_save_account_details_required_fields', function () {
+	return array( 'account_email' => 'E-mail' );
+} );
+
+// US-7.1 : la civilité est visible par l'administrateur dans Comptes > Profil (partie Facturation).
+add_filter( 'woocommerce_customer_meta_fields', function ( $champs ) {
+	$champs['billing']['fields'] = array(
+		'watsons_civilite' => array(
+			'label'   => 'Civilité',
+			'type'    => 'select',
+			'options' => array(
+				''    => '—',
+				'mme' => 'Mme',
+				'm'   => 'M.',
+			),
+		),
+	) + $champs['billing']['fields'];
+
+	return $champs;
 } );

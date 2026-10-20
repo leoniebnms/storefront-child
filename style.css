@@ -1,7 +1,7 @@
 /*
 Theme Name: Storefront Child SAE301
 Template: storefront
-Version: 1.5.3
+Version: 1.6.1
 */
 
 /* Couleurs et fonts de la maquette */
@@ -2287,5 +2287,364 @@ html {
   .merci-recap__liste {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
+  }
+}
+
+/* US-7.2 : icône "Mon compte" dans l'en-tête, en rouille pour la distinguer des réseaux sociaux */
+.watsons-social__lien--compte {
+  background: var(--rouille);
+}
+
+.watsons-social__lien--compte:hover {
+  background: var(--noir);
+}
+
+/* Le lien "Mon compte" du menu : remplacé par l'icône sur ordinateur */
+@media (min-width: 48rem) {
+  .site-header .main-navigation .primary-navigation ul.menu > li.menu-compte {
+    display: none;
+  }
+}
+
+/* Pas de "Mon compte" dans le menu du bas (comme sur la maquette) */
+.watsons-footer-menu li.menu-compte {
+  display: none;
+}
+
+/* Mobile : "Mon compte" dans le menu burger, avec l'icône rouille devant */
+@media (max-width: 47.94rem) {
+  .site-header .handheld-navigation ul.menu li.menu-compte a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .site-header .handheld-navigation ul.menu li.menu-compte a::before {
+    content: "";
+    flex-shrink: 0;
+    width: 1.63rem;
+    height: 1.63rem;
+    border-radius: 50%;
+    background: var(--rouille)
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='8.5' r='3.6' fill='%23fff'/%3E%3Cpath d='M5 20c.8-4 3.6-6 7-6s6.2 2 7 6z' fill='%23fff'/%3E%3C/svg%3E")
+      no-repeat center / 1rem;
+  }
+}
+
+/* US-7.2 : pages du compte client */
+
+/* Titre de la page : centré (Mon compte, mot de passe oublié) */
+.woocommerce-account .hentry .entry-header {
+  margin: 0 0 2rem;
+  padding: 0;
+  border-bottom: 0;
+  text-align: center;
+}
+
+.woocommerce-account .hentry .entry-title {
+  font-size: 3rem;
+  line-height: 1;
+  text-align: center;
+}
+
+/* Connexion / inscription : titre à gauche, au-dessus des deux cadres */
+.compte-page--connexion .hentry .entry-header {
+  max-width: 46rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.compte-page--connexion .hentry .entry-header,
+.compte-page--connexion .hentry .entry-title {
+  text-align: left;
+}
+
+/* Pas de menu à gauche : le contenu prend toute la largeur */
+.woocommerce-account .woocommerce-MyAccount-content {
+  float: none;
+  width: 100%;
+}
+
+/* Les deux cadres côte à côte : Se connecter | Créer un compte */
+.compte-acces {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.13rem;
+  align-items: start;
+  max-width: 46rem;
+  margin: 0 auto;
+}
+
+.compte-acces--seul {
+  grid-template-columns: 1fr;
+  max-width: 23rem;
+}
+
+/* Page connectée : les cadres l'un sous l'autre, au centre */
+.compte {
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+/* Un cadre gris */
+.compte-cadre {
+  padding: 1.75rem 1.5rem 2rem;
+  border: 0.06rem solid var(--gris);
+}
+
+.compte .compte-cadre + .compte-cadre {
+  margin-top: 1.75rem;
+}
+
+.compte-cadre--centre {
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.woocommerce-account .compte-cadre__titre {
+  margin: 0;
+  font-family: var(--font-grand-titre);
+  font-weight: normal;
+  font-synthesis: none;
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: uppercase;
+}
+
+/* Titres plus petits sur la page connectée */
+.woocommerce-account .compte .compte-cadre__titre {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.compte-cadre__sous-titre {
+  margin: 0.25rem 0 1.5rem;
+  font-size: 0.94rem;
+}
+
+.compte-cadre__info {
+  font-size: 0.81rem;
+}
+
+.compte-cadre__lien {
+  margin: 1rem 0 0;
+  font-size: 0.81rem;
+  text-align: center;
+}
+
+/* Le formulaire : on enlève le cadre que Storefront met autour */
+.compte-cadre .compte-formulaire {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+/* Deux champs côte à côte (Nom | Prénom, Code postal | Ville) */
+.compte-formulaire__ligne {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 1.75rem;
+}
+
+/* Champs soulignés, comme sur la page Commande */
+.compte-champ {
+  margin: 0 0 1rem;
+}
+
+.compte-champ__libelle {
+  display: block;
+  font-size: 0.81rem;
+  color: var(--gris);
+}
+
+.compte-formulaire .compte-champ__saisie {
+  width: 100%;
+  padding: 0.38rem 0;
+  border: 0;
+  border-bottom: 0.06rem solid var(--gris);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 0.94rem;
+}
+
+.compte-formulaire .compte-champ__saisie:focus {
+  border-bottom-color: var(--rouille);
+}
+
+/* Case "Se souvenir de moi" : carrée, rouille quand elle est cochée */
+.compte-case {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.5rem 0 1.5rem;
+  font-size: 0.94rem;
+  cursor: pointer;
+}
+
+.compte-case__saisie {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  border: 0.06rem solid var(--gris-bordure);
+  border-radius: 0;
+  background: var(--blanc);
+  cursor: pointer;
+}
+
+.compte-case__saisie:checked {
+  background: var(--rouille);
+  border-color: var(--rouille);
+}
+
+/* Civilité : Mme / M. avec des boutons ronds, rouille quand choisi */
+.compte .compte-civilite {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.compte .compte-civilite__titre {
+  margin: 0 0 0.38rem;
+  padding: 0;
+  background: transparent;
+  font-size: 0.81rem;
+  font-weight: 400;
+  color: var(--gris);
+}
+
+.compte-civilite__option {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 2.5rem;
+  font-size: 0.94rem;
+  cursor: pointer;
+}
+
+.compte-civilite__radio {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  border: 0.06rem solid var(--gris-bordure);
+  border-radius: 50%;
+  background: var(--blanc);
+  cursor: pointer;
+}
+
+.compte-civilite__radio:checked {
+  border: 0.31rem solid var(--rouille);
+}
+
+/* Texte sur les données personnelles, sous "Créer un compte" */
+.compte-formulaire .woocommerce-privacy-policy-text p {
+  margin: 0.5rem 0 1.5rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+/* Boutons : rouille plein, ou contour noir */
+.compte-bouton {
+  display: block;
+  width: 100%;
+  margin: 0.5rem 0 0;
+  padding: 0.88rem 1rem;
+  border: 0.06rem solid var(--rouille);
+  background-color: var(--rouille);
+  color: var(--blanc);
+  font-family: var(--font-texte);
+  font-size: 0.94rem;
+  font-weight: 400;
+  text-align: center;
+  cursor: pointer;
+}
+
+.compte-bouton:hover {
+  border-color: var(--noir);
+  background-color: var(--noir);
+  color: var(--blanc);
+}
+
+.compte-bouton--contour {
+  border-color: var(--noir);
+  background-color: var(--blanc);
+  color: var(--noir);
+}
+
+/* "Modifier mon mot de passe" : le bouton disparaît quand les champs sont dépliés */
+.compte-mdp > summary {
+  list-style: none;
+}
+
+.compte-mdp > summary::-webkit-details-marker {
+  display: none;
+}
+
+.compte-mdp[open] > summary {
+  display: none;
+}
+
+/* "Me déconnecter" : petit bouton à contour, centré sous les cadres */
+.compte .compte__deconnexion {
+  width: auto;
+  max-width: 13rem;
+  margin: 1.75rem auto 0;
+  padding: 0.63rem 1.5rem;
+  font-size: 0.81rem;
+  text-decoration: none;
+}
+
+/* Page "Nouveau mot de passe" (après le lien reçu par e-mail) : même style */
+.woocommerce-account form.woocommerce-ResetPassword:not(.compte-formulaire) {
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: 1.75rem 1.5rem 2rem;
+  border: 0.06rem solid var(--gris);
+  border-radius: 0;
+}
+
+.woocommerce-account
+  form.woocommerce-ResetPassword:not(.compte-formulaire)
+  .input-text {
+  padding: 0.38rem 0;
+  border: 0;
+  border-bottom: 0.06rem solid var(--gris);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Mobile : les cadres l'un sous l'autre */
+@media (max-width: 47.94rem) {
+  .woocommerce-account .hentry .entry-title {
+    font-size: 2.25rem;
+  }
+
+  .compte-acces {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  .compte-cadre {
+    padding: 1.5rem 1.25rem 1.75rem;
+  }
+
+  .woocommerce-account .compte-cadre__titre {
+    font-size: 1.5rem;
+  }
+
+  .woocommerce-account .compte .compte-cadre__titre {
+    font-size: 1.25rem;
+  }
+
+  .compte-formulaire__ligne {
+    column-gap: 1.25rem;
   }
 }
