@@ -135,4 +135,41 @@ $minutes_preparation = 20;
 		</div>
 
 		<p class="merci__retour">
-			<a class="retour-carte" hr
+			<a class="retour-carte" href="<?php echo esc_url( home_url( '/' ) ); ?>"><svg class="retour-carte__icone" viewBox="0 0 9 14" aria-hidden="true"><path d="M8 1 2 7l6 6"/></svg>Retour à l'accueil</a>
+		</p>
+
+		<script>
+		/* Compte à rebours jusqu'à l'heure où la commande sera prête. */
+		( function () {
+			var bloc = document.querySelector( '.merci-minuteur' );
+
+			if ( ! bloc ) {
+				return;
+			}
+
+			var temps = bloc.querySelector( '.merci-minuteur__temps' );
+			var fin = parseInt( bloc.dataset.fin, 10 ) * 1000;
+			var deuxChiffres = function ( n ) {
+				return ( n < 10 ? '0' : '' ) + n;
+			};
+
+			function majMinuteur() {
+				var reste = Math.max( 0, Math.round( ( fin - Date.now() ) / 1000 ) );
+
+				if ( 0 === reste ) {
+					temps.textContent = 'Votre commande est prête !';
+					clearInterval( minuteur );
+					return;
+				}
+
+				temps.textContent = deuxChiffres( Math.floor( reste / 3600 ) ) + ' : ' + deuxChiffres( Math.floor( reste / 60 ) % 60 ) + ' : ' + deuxChiffres( reste % 60 );
+			}
+
+			var minuteur = setInterval( majMinuteur, 1000 );
+			majMinuteur();
+		} )();
+		</script>
+
+	<?php endif; ?>
+
+</div>
