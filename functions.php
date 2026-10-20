@@ -624,3 +624,197 @@ add_action( 'wp_footer', function () {
 	</a>
 	<?php
 } );
+
+/** US-6.1 : texte "Instructions pour le retrait", modifiable dans WooCommerce > Réglages > Général (en bas de la page). */
+add_filter( 'woocommerce_general_settings', function ( $reglages ) {
+	$reglages[] = array(
+		'title' => 'Click & Collect',
+		'type'  => 'title',
+		'desc'  => 'Texte affiché sur la page de commande quand le client choisit le retrait en boutique.',
+		'id'    => 'watsons_retrait',
+	);
+
+	$reglages[] = array(
+		'title'    => 'Instructions pour le retrait',
+		'id'       => 'watsons_instructions_retrait',
+		'type'     => 'textarea',
+		'css'      => 'min-width: 400px; height: 120px;',
+		'default'  => "Votre commande sera prête 20 minutes après sa validation.\nPrésentez-vous au comptoir du Watson's Pub, 17 rue Saint-Front à Périgueux, avec votre numéro de commande.",
+		'desc_tip' => 'Une ligne par paragraphe.',
+	);
+
+	$reglages[] = array(
+		'type' => 'sectionend',
+		'id'   => 'watsons_retrait',
+	);
+
+	return $reglages;
+} );
+
+// Le client a-t-il choisi "Retrait en boutique" ?
+function watsons_retrait_choisi() {
+	if ( ! function_exists( 'WC' ) || ! WC()->session ) {
+		return false;
+	}
+
+	foreach ( (array) WC()->session->get( 'chosen_shipping_methods' ) as $mode ) {
+		if ( 0 === strpos( (string) $mode, 'local_pickup' ) || 0 === strpos( (string) $mode, 'pickup_location' ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Le bloc "Instructions pour le retrait" (caché si le client choisit la livraison).
+function watsons_bloc_instructions_retrait() {
+	$texte = trim( (string) get_option( 'watsons_instructions_retrait', '' ) );
+
+	if ( '' === $texte ) {
+		return '<div class="instructions-retrait" hidden></div>';
+	}
+
+	return sprintf(
+		'<div class="instructions-retrait"%s><h3 class="instructions-retrait__titre">Instructions pour le retrait</h3><div class="instructions-retrait__texte">%s</div></div>',
+		watsons_retrait_choisi() ? '' : ' hidden',
+		wpautop( esc_html( $texte ) )
+	);
+}
+
+/** US-6.2 : le bloc s'affiche sur la page de commande, sous les informations du client... */
+add_action( 'woocommerce_after_order_notes', function () {
+	echo watsons_bloc_instructions_retrait(); // phpcs:ignore WordPress.Security.EscapeOutput -- déjà échappé.
+} );
+
+// ... et se met à jour tout seul quand la page de commande se recharge.
+add_filter( 'woocommerce_update_order_review_fragments', function ( $fragments ) {
+	$fragments['.instructions-retrait'] = watsons_bloc_instructions_retrait();
+	return $fragments;
+} );
+
+/** US-6.2 : page Commande comme la maquette Finalisation. */
+add_action( 'init', function () {
+	// Pas de bandeau "Avez-vous un code promo ?" (il reviendra avec les promotions, IT 10).
+	remove_action( 'woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10 );
+
+	// Le choix du paiement passe dans le cadre de gauche, sous les informations du client.
+	remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20 );
+	add_action( 'woocommerce_checkout_shipping', 'woocommerce_checkout_payment', 20 );
+} );
+
+// Lien "Retour au panier" au-dessus du titre (le mode de réception se change dans le panier).
+add_action( 'storefront_page_before', function () {
+	if ( ! is_checkout() || is_wc_endpoint_url() ) {
+		return;
+	}
+
+	printf(
+		'<a class="retour-carte" href="%s"><svg class="retour-carte__icone" viewBox="0 0 9 14" aria-hidden="true"><path d="M8 1 2 7l6 6"/></svg>Retour au panier</a>',
+		esc_url( wc_get_cart_url() )
+	);
+} );
+
+// En haut du cadre : "Le Watson's Pub" et le mode de réception choisi.
+add_action( 'woocommerce_checkout_billing', function () {
+	printf(
+		'<div class="commande-entete"><p class="commande-entete__titre">Le Watson\'s Pub</p><p class="commande-entete__mode">%s</p></div>',
+		esc_html( watsons_retrait_choisi() ? 'Click & Collect' : 'Livraison à domicile' )
+	);
+}, 5 );
+
+// "Détails de facturation" devient "Informations personnelles".
+add_filter( 'gettext', function ( $traduction, $texte, $domaine ) {
+	if ( ! is_admin() && 'woocommerce' === $domaine && in_array( $texte, array( 'Billing details', 'Billing &amp; Shipping' ), true ) ) {
+		return 'Informations personnelles';
+	}
+
+	return $traduction;
+}, 10, 3 );
+
+// Les champs du formulaire, dans l'ordre de la maquette : Nom, Prénom, E-mail, Rue, Ville, Code postal, Téléphone.
+add_filter( 'woocommerce_checkout_fields', function ( $champs ) {
+	// Pas de société ni de complément d'adresse sur la maquette.
+	unset( $champs['billing']['billing_company'], $champs['billing']['billing_address_2'] );
+
+	$ordre = array(
+		'billing_last_name'  => 10,
+		'billing_first_name' => 11,
+		'billing_email'      => 12,
+		'billing_address_1'  => 13,
+		'billing_city'       => 14,
+		'billing_postcode'   => 15,
+		'billing_phone'      => 16,
+	);
+
+	foreach ( $ordre as $nom => $priorite ) {
+		if ( isset( $champs['billing'][ $nom ] ) ) {
+			$champs['billing'][ $nom ]['priority'] = $priorite;
+			$champs['billing'][ $nom ]['class']    = array( 'form-row-wide' );
+		}
+	}
+
+	// Retrait en boutique : l'adresse n'est pas obligatoire (elle l'est pour la livraison).
+	if ( watsons_retrait_choisi() ) {
+		foreach ( array( 'billing_address_1', 'billing_city', 'billing_postcode', 'billing_state' ) as $nom ) {
+			if ( isset( $champs['billing'][ $nom ] ) ) {
+				$champs['billing'][ $nom ]['required'] = false;
+			}
+		}
+	}
+
+	// Exemple dans le champ Notes, comme sur la maquette.
+	if ( isset( $champs['order']['order_comments'] ) ) {
+		$champs['order']['order_comments']['placeholder'] = "Ex. : code de l'immeuble, étage…";
+	}
+
+	return $champs;
+} );
+
+// Pas de "Expédier à une adresse différente ?" : on utilise l'adresse du formulaire.
+add_filter( 'woocommerce_cart_needs_shipping_address', '__return_false' );
+
+// Titre au-dessus des moyens de paiement.
+add_action( 'woocommerce_review_order_before_payment', function () {
+	echo '<h3 class="commande-paiement__titre">Choisissez votre moyen de paiement</h3>';
+} );
+
+// Bouton "Payer 15,00 €" au lieu de "Commander".
+add_filter( 'woocommerce_order_button_text', function ( $texte ) {
+	if ( ! WC()->cart || is_wc_endpoint_url( 'order-pay' ) ) {
+		return $texte;
+	}
+
+	return 'Payer ' . html_entity_decode( wp_strip_all_tags( WC()->cart->get_total() ), ENT_QUOTES, 'UTF-8' );
+} );
+
+// Titre du récapitulatif à droite, avec le total juste en dessous.
+add_action( 'woocommerce_checkout_order_review', function () {
+	echo '<h2 class="commande-panier__titre">Votre panier</h2>';
+	printf(
+		'<p class="commande-panier__total"><span>Total (TTC)</span><span>%s</span></p>',
+		wp_kses_post( WC()->cart->get_total() )
+	);
+}, 5 );
+
+// Dans le récapitulatif : "Retrait en boutique | Gratuit" ou "Livraison à domicile | 6,90 €".
+add_filter( 'woocommerce_cart_shipping_method_full_label', function ( $libelle, $mode ) {
+	if ( ! is_checkout() ) {
+		return $libelle;
+	}
+
+	$cout = (float) $mode->get_cost();
+	if ( WC()->cart->display_prices_including_tax() ) {
+		$cout += (float) $mode->get_shipping_tax();
+	}
+
+	return sprintf(
+		'<span class="commande-panier__mode">%s</span><span>%s</span>',
+		esc_html( $mode->get_label() ),
+		$cout > 0 ? wc_price( $cout ) : 'Gratuit'
+	);
+}, 10, 2 );
+
+/** US-6.2 : page "Commande reçue" (le contenu est dans woocommerce/checkout/thankyou.php). */
+add_filter( 'woocommerce_endpoint_order-received_title', function () {
+	return 'Merci pour votre commande !';
+} );

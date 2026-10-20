@@ -1,7 +1,7 @@
 /*
 Theme Name: Storefront Child SAE301
 Template: storefront
-Version: 1.4.1
+Version: 1.5.3
 */
 
 /* Couleurs et fonts de la maquette */
@@ -1641,5 +1641,651 @@ html {
   .panier-flottant__icone {
     width: 1.5rem;
     height: 1.5rem;
+  }
+}
+
+/* US-6.1 : bloc "Instructions pour le retrait" dans le formulaire de commande */
+.instructions-retrait {
+  margin: 2.5rem 0 0;
+}
+
+.instructions-retrait[hidden] {
+  display: none;
+}
+
+.instructions-retrait__texte p {
+  margin: 0 0 0.5rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.instructions-retrait__texte p:last-child {
+  margin-bottom: 0;
+}
+
+/* US-6.2 : page Commande comme la maquette Finalisation */
+.woocommerce-checkout .hentry .entry-header,
+.woocommerce-checkout .hentry .entry-title {
+  text-align: left;
+}
+
+.woocommerce-checkout .entry-header .entry-title {
+  font-size: 4.5rem;
+  line-height: 1;
+  margin: 0 0 2.5rem;
+}
+
+/* Deux colonnes : le formulaire à gauche, le panier à droite */
+.woocommerce-checkout form.checkout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 16rem;
+  column-gap: 4.25rem;
+  align-items: start;
+}
+
+.woocommerce-checkout form.checkout::before,
+.woocommerce-checkout form.checkout::after {
+  display: none;
+}
+
+/* Les messages d'erreur prennent toute la largeur */
+.woocommerce-checkout form.checkout > .woocommerce-NoticeGroup {
+  grid-column: 1 / -1;
+}
+
+/* Le cadre de gauche : informations, instructions et paiement */
+.woocommerce-checkout #customer_details {
+  grid-column: 1;
+  grid-row: 1;
+  float: none;
+  width: auto;
+  margin: 0;
+  padding: 2rem 2rem 2.5rem;
+  border: 0.06rem solid var(--gris);
+}
+
+.woocommerce-checkout #customer_details .col-1,
+.woocommerce-checkout #customer_details .col-2 {
+  float: none;
+  width: 100%;
+  margin: 0;
+}
+
+/* En haut du cadre : "Le Watson's Pub" et le mode de réception */
+.commande-entete {
+  margin: 0 0 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 0.06rem solid var(--noir);
+}
+
+.commande-entete__titre {
+  margin: 0;
+  font-family: var(--font-grand-titre);
+  font-size: 2rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.commande-entete__mode {
+  margin: 0.25rem 0 0;
+  font-size: 0.81rem;
+}
+
+/* Titres des parties du formulaire */
+.woocommerce-checkout .woocommerce-billing-fields > h3,
+.instructions-retrait__titre,
+.commande-paiement__titre {
+  margin: 0 0 1rem;
+  font-family: var(--font-texte);
+  font-weight: 400;
+  font-size: 1.25rem;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--noir);
+}
+
+.commande-paiement__titre {
+  margin-top: 2.5rem;
+}
+
+/* Champs soulignés, comme sur la maquette */
+.woocommerce-checkout #customer_details .form-row {
+  margin: 0 0 1rem;
+  padding: 0;
+}
+
+.woocommerce-checkout #customer_details .form-row label {
+  margin: 0;
+  font-size: 0.81rem;
+  color: var(--gris);
+}
+
+.woocommerce-checkout #customer_details .input-text {
+  width: 100%;
+  padding: 0.38rem 0;
+  border: 0;
+  border-bottom: 0.06rem solid var(--gris);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font-size: 0.94rem;
+}
+
+.woocommerce-checkout #customer_details .input-text:focus {
+  border-bottom-color: var(--rouille);
+}
+
+.woocommerce-checkout .required {
+  color: var(--rouille);
+  text-decoration: none;
+  border: 0;
+}
+
+/* Pays caché : on ne vend qu'en France (WooCommerce en a quand même besoin) */
+.woocommerce-checkout #billing_country_field {
+  display: none;
+}
+
+/* Pas de titre "Informations complémentaires" au-dessus des notes */
+.woocommerce-checkout .woocommerce-additional-fields > h3 {
+  display: none;
+}
+
+.woocommerce-checkout #customer_details textarea.input-text {
+  min-height: 2.5rem;
+  resize: vertical;
+}
+
+/* Listes (Pays en livraison) soulignées comme les champs */
+.woocommerce-checkout #customer_details select {
+  width: 100%;
+  padding: 0.38rem 0;
+  border: 0;
+  border-bottom: 0.06rem solid var(--gris);
+  border-radius: 0;
+  background: transparent;
+  font-size: 0.94rem;
+}
+
+/* Moyens de paiement : un cadre par moyen, celui choisi encadré en rouille */
+.woocommerce-checkout #payment {
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.woocommerce-checkout #payment .payment_methods {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  list-style: none;
+}
+
+.woocommerce-checkout #payment .payment_methods > li {
+  margin: 0 0 0.5rem;
+  padding: 1.13rem 1.5rem;
+  border: 0.06rem solid var(--gris);
+  background: transparent;
+  list-style: none;
+}
+
+.woocommerce-checkout #payment .payment_methods > li:has(input:checked) {
+  border-color: var(--rouille);
+}
+
+.woocommerce-checkout #payment .payment_methods > li > label {
+  display: block;
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+  font-size: 0.94rem;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+/* Le rond devant chaque moyen de paiement (dessiné par Storefront) */
+.woocommerce-checkout
+  #payment
+  .payment_methods
+  li
+  input[type="radio"]:first-child
+  + label::before {
+  color: var(--gris-clair);
+}
+
+.woocommerce-checkout
+  #payment
+  .payment_methods
+  li
+  input[type="radio"]:first-child:checked
+  + label::before {
+  color: var(--rouille);
+}
+
+/* Description du moyen choisi, sur fond gris */
+.woocommerce-checkout #payment .payment_methods .payment_box {
+  margin: 1rem -1.5rem -1.13rem;
+  padding: 0.88rem 1.5rem;
+  background: var(--gris-entete);
+  font-size: 0.81rem;
+}
+
+.woocommerce-checkout #payment .payment_methods .payment_box::before {
+  display: none;
+}
+
+.woocommerce-checkout #payment .payment_methods .payment_box p {
+  margin: 0;
+}
+
+/* Texte sur les données personnelles + bouton "Payer" */
+.woocommerce-checkout #payment .place-order {
+  margin: 1.5rem 0 0;
+  padding: 0;
+  background: transparent;
+}
+
+.woocommerce-checkout #payment .woocommerce-privacy-policy-text p {
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.woocommerce-checkout #payment #place_order {
+  float: none;
+  width: 100%;
+  margin: 1.5rem 0 0;
+  padding: 1rem;
+  background-color: var(--rouille);
+  border-color: var(--rouille);
+  color: var(--blanc);
+  font-size: 1.13rem;
+}
+
+.woocommerce-checkout #payment #place_order:hover {
+  background-color: var(--noir);
+  border-color: var(--noir);
+}
+
+/* Le cadre de droite : "Votre panier" */
+.woocommerce-checkout #order_review_heading {
+  display: none;
+}
+
+.woocommerce-checkout #order_review {
+  grid-column: 2;
+  grid-row: 1;
+  float: none;
+  width: auto;
+  margin: 0;
+  border: 0.06rem solid var(--gris);
+}
+
+.commande-panier__titre {
+  margin: 0;
+  padding: 1.25rem 1.5rem 0.75rem;
+  font-family: var(--font-grand-titre);
+  font-size: 2.5rem;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.woocommerce-checkout #order_review .shop_table {
+  margin: 0;
+  border: 0;
+}
+
+.woocommerce-checkout #order_review .shop_table thead {
+  display: none;
+}
+
+.woocommerce-checkout #order_review .shop_table th,
+.woocommerce-checkout #order_review .shop_table td {
+  padding: 0.5rem 1.5rem;
+  border: 0;
+  background: transparent;
+  font-size: 0.81rem;
+  font-weight: 400;
+  vertical-align: top;
+}
+
+.woocommerce-checkout #order_review .shop_table .cart_item td {
+  color: var(--gris);
+}
+
+.woocommerce-checkout #order_review .shop_table .product-quantity {
+  font-weight: 400;
+}
+
+.woocommerce-checkout #order_review .shop_table td.product-total,
+.woocommerce-checkout #order_review .shop_table tfoot td {
+  text-align: right;
+}
+
+.woocommerce-checkout #order_review .shop_table dl.variation {
+  margin: 0.13rem 0 0;
+  font-size: 0.75rem;
+}
+
+/* Total (TTC) sous le titre, séparé par un trait */
+.commande-panier__total {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0 1.5rem 1rem;
+  border-bottom: 0.06rem solid var(--gris);
+  font-size: 0.81rem;
+}
+
+/* Chaque ligne du récap : texte à gauche, prix à droite */
+.woocommerce-checkout #order_review .shop_table,
+.woocommerce-checkout #order_review .shop_table tbody,
+.woocommerce-checkout #order_review .shop_table tfoot {
+  display: block;
+}
+
+.woocommerce-checkout #order_review .shop_table tbody {
+  padding-top: 0.75rem;
+}
+
+.woocommerce-checkout #order_review .shop_table tr {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.woocommerce-checkout #order_review .shop_table th,
+.woocommerce-checkout #order_review .shop_table td {
+  display: block;
+}
+
+.woocommerce-checkout #order_review .shop_table dl.variation dt,
+.woocommerce-checkout #order_review .shop_table dl.variation dd,
+.woocommerce-checkout #order_review .shop_table dl.variation dd p {
+  display: inline;
+  float: none;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Le nom du produit prend toute la place libre */
+.woocommerce-checkout #order_review .shop_table td.product-name {
+  flex: 1;
+}
+
+/* Ligne du mode de réception : "Retrait en boutique | Gratuit" sur toute la largeur */
+.woocommerce-checkout #order_review .woocommerce-shipping-totals th {
+  display: none;
+}
+
+.woocommerce-checkout #order_review .woocommerce-shipping-totals td {
+  flex: 1;
+  text-align: left;
+}
+
+.woocommerce-checkout #order_review #shipping_method label {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* Une ligne grise entre les produits et les totaux */
+.woocommerce-checkout #order_review .shop_table tfoot tr:first-child th,
+.woocommerce-checkout #order_review .shop_table tfoot tr:first-child td {
+  padding-top: 1rem;
+  border-top: 0.06rem solid var(--gris-clair);
+}
+
+.woocommerce-checkout #order_review .shop_table .order-total th,
+.woocommerce-checkout #order_review .shop_table .order-total td {
+  padding-bottom: 1.25rem;
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+/* Le mode de réception se choisit dans le panier : ici, on n'affiche que celui choisi */
+.woocommerce-checkout #order_review #shipping_method {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.woocommerce-checkout #order_review #shipping_method li {
+  margin: 0;
+}
+
+.woocommerce-checkout
+  #order_review
+  #shipping_method
+  li:has(input[type="radio"]:not(:checked)),
+.woocommerce-checkout #order_review #shipping_method input[type="radio"] {
+  display: none;
+}
+
+/* Mobile : une seule colonne, le panier au-dessus du formulaire */
+@media (max-width: 47.94rem) {
+  .woocommerce-checkout .entry-header .entry-title {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .woocommerce-checkout form.checkout {
+    grid-template-columns: 1fr;
+    row-gap: 2rem;
+  }
+
+  .woocommerce-checkout #order_review {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .woocommerce-checkout #customer_details {
+    grid-column: 1;
+    grid-row: 2;
+    padding: 1.5rem 1.25rem 2rem;
+  }
+}
+
+/* US-6.2 : page Confirmation (Commande reçue) comme la maquette */
+.woocommerce-order-received .hentry .entry-header,
+.woocommerce-order-received .hentry .entry-title {
+  text-align: center;
+}
+
+.woocommerce-order-received .entry-header .entry-title {
+  font-size: 3.5rem;
+  margin: 0 0 0.5rem;
+}
+
+.merci__sous-titre {
+  margin: 0 0 3.5rem;
+  font-size: 1.13rem;
+  text-align: center;
+}
+
+.merci {
+  display: grid;
+  grid-template-columns: 18.5rem minmax(0, 1fr);
+  gap: 3.5rem;
+  align-items: start;
+  max-width: 54rem;
+  margin: 0 auto;
+}
+
+/* À gauche : le récapitulatif du panier */
+.merci-recap {
+  border: 0.06rem solid var(--gris);
+}
+
+.merci-recap__titre {
+  margin: 0;
+  padding: 1.25rem 1rem 0.75rem;
+  font-family: var(--font-grand-titre);
+  font-size: 2.25rem;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.merci-recap__total {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0 3.25rem 1rem;
+  border-bottom: 0.06rem solid var(--gris);
+  font-size: 0.81rem;
+}
+
+.merci-recap__liste {
+  margin: 0;
+  padding: 1rem 3.25rem;
+  list-style: none;
+}
+
+.merci-recap__ligne {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.63rem 0;
+  border-bottom: 0.06rem dotted var(--gris);
+  font-family: var(--font-titre);
+  font-size: 0.81rem;
+  text-transform: uppercase;
+}
+
+.merci-recap__ligne:last-child {
+  border-bottom: 0;
+}
+
+.merci-recap__sans {
+  display: block;
+  margin-top: 0.13rem;
+  font-family: var(--font-texte);
+  font-size: 0.75rem;
+  text-transform: none;
+  color: var(--gris);
+}
+
+.merci-recap__prix {
+  white-space: nowrap;
+}
+
+/* À droite : le numéro de commande et les instructions */
+.merci-infos__numero {
+  margin: 0 0 1.5rem;
+  font-family: var(--font-grand-titre);
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.merci-infos__texte,
+.merci-infos__texte p {
+  margin: 0 0 0.5rem;
+  font-size: 1.13rem;
+  line-height: 1.4;
+}
+
+.merci-infos__note {
+  margin: 1.5rem 0 0.5rem;
+  font-size: 1.13rem;
+  color: var(--gris);
+}
+
+.merci-infos__adresse {
+  font-size: 1.13rem;
+}
+
+/* Le compte à rebours sur fond rouille */
+.merci-minuteur {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.13rem;
+  margin: 0;
+  padding: 1.25rem 1.5rem;
+  background: var(--rouille);
+  color: var(--blanc);
+  font-size: 0.94rem;
+  letter-spacing: 0.04em;
+}
+
+.merci-minuteur__icone {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+/* Coordonnées bancaires (virement) ou consignes du paiement au retrait */
+.merci-infos__paiement {
+  margin-top: 1.5rem;
+  font-size: 0.94rem;
+}
+
+/* Virement : coordonnées bancaires sous un trait gris */
+.merci-virement {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 0.06rem solid var(--gris-clair);
+}
+
+.merci-virement__titre {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-size: 0.94rem;
+  text-transform: uppercase;
+}
+
+.merci-virement__texte {
+  margin: 0 0 0.5rem;
+  font-size: 0.81rem;
+  line-height: 1.6;
+}
+
+/* Pas de grand espace sous le titre "Merci pour votre commande !" */
+.woocommerce-order-received .hentry .entry-header {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+/* "Retour à l'accueil" sans soulignement (Storefront souligne les liens du contenu) */
+.merci__retour a.retour-carte:not(.button):not(.components-button) {
+  text-decoration: none;
+}
+
+.merci__retour {
+  margin: 3.75rem 0 0;
+  text-align: center;
+}
+
+/* Mobile : une seule colonne, les infos au-dessus du récap */
+@media (max-width: 47.94rem) {
+  .woocommerce-order-received .entry-header .entry-title {
+    font-size: 2.25rem;
+  }
+
+  .merci {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .merci-infos {
+    grid-row: 1;
+  }
+
+  .merci-minuteur {
+    display: flex;
+    justify-content: center;
+  }
+
+  .merci-recap__total,
+  .merci-recap__liste {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 }
