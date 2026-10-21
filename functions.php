@@ -1245,3 +1245,32 @@ add_action( 'template_redirect', function () {
 	wp_safe_redirect( add_query_arg( 'annulee', '1', $commande->get_view_order_url() ) );
 	exit;
 } );
+
+/** US-9.3 : e-mails "Paiement reçu", "Commande annulée" et "Remboursement effectué" */
+
+// Le client avait-il déjà payé sa commande annulée ? (noté au moment de l'annulation, sinon on regarde le paiement)
+function watsons_commande_a_rembourser( $commande ) {
+	$note = $commande->get_meta( '_watsons_a_rembourser' );
+
+	if ( $note ) {
+		return 'oui' === $note;
+	}
+
+	return $commande->get_date_paid() && 'cod' !== $commande->get_payment_method();
+}
+
+// Nouvel e-mail "Commande annulée" envoyé au client (la classe est dans inc/).
+add_filter( 'woocommerce_email_classes', function ( $emails ) {
+	require_once get_stylesheet_directory() . '/inc/class-watsons-email-commande-annulee.php';
+	$emails['Watsons_Email_Commande_Annulee'] = new Watsons_Email_Commande_Annulee();
+	return $emails;
+} );
+
+// Objet du mail "Commande en cours" quand le virement est reçu : "Paiement reçu...".
+add_filter( 'woocommerce_email_subject_customer_processing_order', function ( $objet, $commande ) {
+	if ( $commande instanceof WC_Order && 'bacs' === $commande->get_payment_method() ) {
+		return 'Paiement reçu pour votre commande n° ' . $commande->get_order_number() . " au Watson's Pub";
+	}
+
+	return $objet;
+}, 10, 2 );

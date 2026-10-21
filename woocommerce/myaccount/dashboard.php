@@ -91,4 +91,46 @@ $nom_affiche = is_email( $utilisateur->display_name ) ? $utilisateur->user_login
 							<td class="compte-commandes__cellule"><?php echo watsons_badge_statut( $commande ); // phpcs:ignore WordPress.Security.EscapeOutput -- déjà échappé. ?></td>
 							<td class="compte-commandes__cellule"><?php echo wp_kses_post( $commande->get_formatted_order_total() ); ?></td>
 							<td class="compte-commandes__cellule compte-commandes__cellule--voir">
-								<a class="compte-commandes__b
+								<a class="compte-commandes__bouton" href="<?php echo esc_url( $commande->get_view_order_url() ); ?>">Voir</a>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		<?php else : ?>
+			<p class="compte-commandes__vide">Vous n'avez pas encore passé de commande.</p>
+		<?php endif; ?>
+	</section>
+
+	<?php /* Identifiant et mot de passe (enregistrés par WooCommerce) */ ?>
+	<section class="compte-cadre">
+		<h2 class="compte-cadre__titre">Changer mon identifiant et mon mot de passe</h2>
+
+		<form class="compte-formulaire" method="post">
+			<?php watsons_champ_compte( 'account_email', 'E-mail', $utilisateur->user_email, 'email', 'email' ); ?>
+
+			<?php /* WooCommerce a besoin du nom et du prénom : on renvoie ceux déjà enregistrés */ ?>
+			<input type="hidden" name="account_first_name" value="<?php echo esc_attr( $utilisateur->first_name ); ?>">
+			<input type="hidden" name="account_last_name" value="<?php echo esc_attr( $utilisateur->last_name ); ?>">
+			<input type="hidden" name="account_display_name" value="<?php echo esc_attr( $nom_affiche ); ?>">
+
+			<?php /* Le bouton "Modifier mon mot de passe" déplie les champs du mot de passe */ ?>
+			<details class="compte-mdp">
+				<summary class="compte-bouton">Modifier mon mot de passe</summary>
+
+				<?php
+				watsons_champ_compte( 'password_current', 'Mot de passe actuel', '', 'password', 'current-password' );
+				watsons_champ_compte( 'password_1', 'Nouveau mot de passe', '', 'password', 'new-password' );
+				watsons_champ_compte( 'password_2', 'Confirmer le nouveau mot de passe', '', 'password', 'new-password' );
+				?>
+
+				<?php wp_nonce_field( 'save_account_details', 'save-account-details-nonce' ); ?>
+				<input type="hidden" name="action" value="save_account_details">
+				<button type="submit" class="compte-bouton" name="save_account_details" value="Enregistrer">Enregistrer</button>
+			</details>
+		</form>
+	</section>
+
+	<a class="button compte-bouton compte-bouton--contour compte__deconnexion" href="<?php echo esc_url( wc_logout_url() ); ?>">Me déconnecter</a>
+
+</div>
