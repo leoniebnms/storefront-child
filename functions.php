@@ -958,3 +958,214 @@ add_filter( 'woocommerce_customer_meta_fields', function ( $champs ) {
 
 	return $champs;
 } );
+
+/** US-8 : e-mails aux couleurs du Watson's Pub (les templates sont dans woocommerce/emails/) */
+
+// La commande est-elle en retrait en boutique ? (comme watsons_retrait_choisi(), mais pour une commande déjà passée)
+function watsons_commande_retrait( $commande ) {
+	if ( ! $commande instanceof WC_Order ) {
+		return false;
+	}
+
+	foreach ( $commande->get_shipping_methods() as $mode ) {
+		if ( in_array( $mode->get_method_id(), array( 'local_pickup', 'pickup_location' ), true ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// Un cadre du mail : titre + contenu. $rouille = true pour le cadre "Instructions pour le retrait".
+function watsons_mail_cadre( $titre, $contenu, $rouille = false ) {
+	printf(
+		'<table class="mail-cadre%1$s" role="presentation" width="100%%" cellpadding="0" cellspacing="0"><tr><td class="mail-cadre__cellule"><h2 class="mail-cadre__titre">%2$s</h2>%3$s</td></tr></table>',
+		$rouille ? ' mail-cadre--rouille' : '',
+		esc_html( $titre ),
+		$contenu // phpcs:ignore WordPress.Security.EscapeOutput -- déjà échappé par les fonctions ci-dessous.
+	);
+}
+
+// Début du mail : sous-titre, numéro de commande et "Bonjour Léonie,".
+function watsons_mail_intro( $commande, $sous_titre, $texte ) {
+	printf(
+		'<p class="mail__sous-titre">%1$s</p><table class="mail__numero" role="presentation" align="center" cellpadding="0" cellspacing="0"><tr><td class="mail__numero-texte">N° %2$s</td></tr></table><p class="mail__texte">Bonjour %3$s,<br>%4$s</p>',
+		esc_html( $sous_titre ),
+		esc_html( $commande->get_order_number() ),
+		esc_html( $commande->get_billing_first_name() ),
+		esc_html( $texte )
+	);
+}
+
+// Cadre "Récapitulatif de votre panier" : produits, réception, paiement et total.
+function watsons_mail_recapitulatif( $commande ) {
+	$devise = array( 'currency' => $commande->get_currency() );
+	$lignes = '';
+
+	foreach ( $commande->get_items() as $article ) {
+		$quantite = $article->get_quantity();
+		$nom      = ( $quantite > 1 ? $quantite . ' × ' : '' ) . $article->get_name();
+
+		// Ingrédients retirés (US-3) : "Sans : Oignons".
+		$options = wc_display_item_meta(
+			$article,
+			array(
+				'before'       => '',
+				'after'        => '',
+				'separator'    => ' – ',
+				'label_before' => '',
+				'label_after'  => ' : ',
+				'echo'         => false,
+				'autop'        => false,
+			)
+		);
+
+		$lignes .= sprintf(
+			'<tr class="mail-recap__produit"><td class="mail-recap__nom">%1$s%2$s</td><td class="mail-recap__prix">%3$s</td></tr>',
+			esc_html( $nom ),
+			$options ? '<span class="mail-recap__options">' . wp_strip_all_tags( $options ) . '</span>' : '',
+			wc_price( $commande->get_line_total( $article, true ), $devise )
+		);
+	}
+
+	// Réception : "Retrait en boutique – Gratuit" ou "Livraison à domicile – 6,90 €".
+	if ( $commande->get_shipping_method() ) {
+		$frais   = (float) $commande->get_shipping_total() + (float) $commande->get_shipping_tax();
+		$lignes .= sprintf(
+			'<tr class="mail-recap__info mail-recap__info--premiere"><td>%1$s</td><td class="mail-recap__prix">%2$s</td></tr>',
+			esc_html( $commande->get_shipping_method() ),
+			$frais > 0 ? wc_price( $frais, $devise ) : 'Gratuit'
+		);
+	}
+
+	$lignes .= sprintf(
+		'<tr class="mail-recap__info"><td>Mode de paiement</td><td class="mail-recap__prix">%s</td></tr>',
+		esc_html( $commande->get_payment_method_title() )
+	);
+
+	$lignes .= sprintf(
+		'<tr class="mail-recap__total"><td>Total (TTC)</td><td class="mail-recap__prix">%s</td></tr>',
+		wc_price( $commande->get_total(), $devise )
+	);
+
+	watsons_mail_cadre(
+		'Récapitulatif de votre panier',
+		'<table class="mail-recap" role="presentation" width="100%" cellpadding="0" cellspacing="0">' . $lignes . '</table>'
+	);
+}
+
+// Cadre "Nos coordonnées bancaires" (paiement par virement), avec le compte réglé dans Paiements > Virement.
+function watsons_mail_coordonnees_bancaires( $commande ) {
+	$contenu = '';
+
+	foreach ( (array) get_option( 'woocommerce_bacs_accounts', array() ) as $compte ) {
+		$contenu .= '<p class="mail-cadre__texte">' . esc_html( isset( $compte['account_name'] ) ? $compte['account_name'] : "Watson's Pub" );
+		if ( ! empty( $compte['iban'] ) ) {
+			$contenu .= '<br>IBAN : ' . esc_html( $compte['iban'] );
+		}
+		if ( ! empty( $compte['bic'] ) ) {
+			$contenu .= '<br>BIC : ' . esc_html( $compte['bic'] );
+		}
+		$contenu .= '</p>';
+	}
+
+	$contenu .= '<p class="mail-cadre__texte">Référence à indiquer : ' . esc_html( $commande->get_order_number() ) . '</p>';
+
+	watsons_mail_cadre( 'Nos coordonnées bancaires', $contenu );
+}
+
+// Cadre "Adresse de livraison".
+function watsons_mail_adresse( $commande ) {
+	$adresse = $commande->get_formatted_shipping_address();
+	if ( ! $adresse ) {
+		$adresse = $commande->get_formatted_billing_address();
+	}
+
+	watsons_mail_cadre( 'Adresse de livraison', '<p class="mail-cadre__texte">' . wp_kses( $adresse, array( 'br' => array() ) ) . '</p>' );
+}
+
+// US-8.3 : cadre rouille "Instructions pour le retrait".
+// $texte = les lignes à afficher (si vide : le texte par défaut de l'IT6). Si le client paie au retrait, on lui rappelle le montant à régler.
+function watsons_mail_instructions_retrait( $commande, $texte ) {
+	$contenu = '';
+
+	if ( '' === trim( (string) $texte ) ) {
+		$texte = "Votre commande sera prête 20 minutes après sa validation.\nPrésentez-vous au comptoir du Watson's Pub, 17 rue Saint-Front à Périgueux, avec votre numéro de commande.";
+	}
+
+	// Une ligne du texte = un paragraphe.
+	foreach ( preg_split( '/\R+/', trim( $texte ) ) as $ligne ) {
+		$contenu .= '<p class="mail-cadre__texte">' . esc_html( $ligne ) . '</p>';
+	}
+
+	if ( 'cod' === $commande->get_payment_method() ) {
+		$contenu .= '<p class="mail-cadre__texte">Le règlement de ' . wc_price( $commande->get_total(), array( 'currency' => $commande->get_currency() ) ) . ' se fait au comptoir, au moment du retrait.</p>';
+	}
+
+	watsons_mail_cadre( 'Instructions pour le retrait', $contenu, true );
+}
+
+/**
+ * US-8.2 / US-8.4 : le style des e-mails.
+ * Dans un mail, le CSS doit être écrit dans chaque balise : WooCommerce le fait tout seul avec ce CSS.
+ * Les couleurs sont celles réglées dans WooCommerce > Réglages > E-mails.
+ * Exception à la règle des rem : dans les mails on garde des px, beaucoup de messageries (Outlook, Gmail) gèrent mal les rem.
+ */
+add_filter( 'woocommerce_email_styles', function ( $css ) {
+	$rouille = get_option( 'woocommerce_email_base_color' ) ? get_option( 'woocommerce_email_base_color' ) : '#b03d1a';
+	$fond    = get_option( 'woocommerce_email_background_color' ) ? get_option( 'woocommerce_email_background_color' ) : '#f3f3f3';
+	$texte   = get_option( 'woocommerce_email_text_color' ) ? get_option( 'woocommerce_email_text_color' ) : '#2a2a2a';
+	$titre   = "Oswald, 'Arial Narrow', Arial, sans-serif";
+
+	$css .= "
+		/* Fond gris et mail blanc de 600px au centre */
+		.mail-fond { width: 100%; margin: 0; padding: 0; background-color: {$fond}; }
+		.mail-fond__cellule { padding: 32px 12px; }
+		.mail { width: 100%; max-width: 600px; background-color: #ffffff; }
+
+		/* Haut : logo et titre */
+		.mail__haut { padding: 40px 24px 0; text-align: center; }
+		.mail__logo { display: block; margin: 0 auto; height: auto; border: 0; }
+		.mail__corps { padding: 16px 40px 40px; font-family: Lato, Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.5; color: {$texte}; }
+		.mail__titre { margin: 0; font-family: {$titre}; font-size: 32px; font-weight: 400; line-height: 1.15; text-align: center; text-transform: uppercase; color: {$texte}; }
+		.mail__sous-titre { margin: 6px 0 0; font-size: 14px; text-align: center; color: {$texte}; }
+
+		/* Badge N° de commande */
+		.mail__numero { margin: 24px auto 40px; }
+		.mail__numero-texte { padding: 7px 20px; background-color: {$rouille}; font-family: {$titre}; font-size: 13px; letter-spacing: 1px; color: #ffffff; }
+		.mail__texte { margin: 0 0 12px; font-size: 13px; color: {$texte}; }
+
+		/* Cadres : coordonnées bancaires, récapitulatif, adresse, instructions */
+		.mail-cadre { width: 100%; margin: 0 0 10px; border: 1px solid #cfcfcf; border-collapse: separate; }
+		.mail-cadre--rouille { border-color: {$rouille}; }
+		.mail-cadre__cellule { padding: 18px 20px; }
+		.mail-cadre__titre { margin: 0 0 12px; font-family: {$titre}; font-size: 17px; font-weight: 400; line-height: 1.2; text-transform: uppercase; color: {$texte}; }
+		.mail-cadre--rouille .mail-cadre__titre { color: {$rouille}; }
+		.mail-cadre__texte { margin: 0 0 4px; font-size: 12px; line-height: 1.5; color: {$texte}; }
+
+		/* Récapitulatif : produits séparés par des pointillés, total sous un trait */
+		.mail-recap td { padding: 7px 0; font-size: 11px; vertical-align: top; color: {$texte}; }
+		.mail-recap__nom { text-transform: uppercase; }
+		.mail-recap__options { display: block; font-size: 11px; text-transform: none; color: #8c8c8c; }
+		.mail-recap__prix { text-align: right; white-space: nowrap; }
+		.mail-recap__produit td { border-bottom: 1px dashed #cfcfcf; }
+		.mail-recap__info td { padding: 4px 0; text-transform: uppercase; }
+		.mail-recap__info--premiere td { padding-top: 10px; }
+		.mail-recap__total td { padding-top: 10px; border-top: 2px solid {$texte}; font-size: 12px; font-weight: bold; }
+
+		/* Pied de page rouille */
+		.mail__pied { padding: 24px; background-color: {$rouille}; text-align: center; }
+		.mail__pied-titre { margin: 0 0 10px; font-family: {$titre}; font-size: 18px; font-weight: 400; text-transform: uppercase; color: #ffffff; }
+		.mail__pied-texte p { margin: 0; font-family: Lato, Helvetica, Arial, sans-serif; font-size: 11px; line-height: 1.6; text-transform: uppercase; color: #ffffff; }
+		.mail__pied-texte a { color: #ffffff; text-decoration: none; }
+
+		/* Mobile */
+		@media (max-width: 600px) {
+			.mail-fond__cellule { padding: 0 !important; }
+			.mail__corps { padding: 16px 20px 32px !important; }
+			.mail__titre { font-size: 24px !important; }
+		}
+	";
+
+	return $css;
+}, 20 );
