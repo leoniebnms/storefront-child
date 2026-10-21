@@ -1,6 +1,7 @@
 <?php
 /**
  * US-9.3 : détail d'une commande (bouton "Voir" dans Mes commandes), comme la maquette.
+ * US-10.3 : ligne du code promo dans le récapitulatif.
  *
  * @package WooCommerce\Templates
  * @version 3.0.0
@@ -73,7 +74,15 @@ $annulee = isset( $_GET['annulee'] ) && $commande->has_status( 'cancelled' );
 							<span class="commande-detail__options"><?php echo esc_html( wp_strip_all_tags( $options ) ); ?></span>
 						<?php endif; ?>
 					</span>
-					<span><?php echo wp_kses_post( wc_price( $commande->get_line_total( $article, true ), $devise ) ); ?></span>
+					<span><?php echo wp_kses_post( wc_price( $commande->get_line_subtotal( $article, true ), $devise ) ); ?></span>
+				</li>
+			<?php endforeach; ?>
+
+			<?php /* US-10.3 : code promo (les produits sont affichés avant la réduction) */ ?>
+			<?php foreach ( $commande->get_coupon_codes() as $code_promo ) : ?>
+				<li class="commande-detail__ligne commande-detail__ligne--promo">
+					<span>Code <?php echo esc_html( strtoupper( $code_promo ) ); ?></span>
+					<span>−<?php echo wp_kses_post( wc_price( (float) $commande->get_discount_total() + (float) $commande->get_discount_tax(), $devise ) ); ?></span>
 				</li>
 			<?php endforeach; ?>
 

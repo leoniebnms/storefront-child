@@ -1,6 +1,7 @@
 <?php
 /**
  * US-6.2 : page Confirmation comme la maquette.
+ * US-10.3 : ligne du code promo dans le récapitulatif.
  *
  * @package WooCommerce\Templates
  * @version 8.1.0
@@ -73,6 +74,14 @@ $minutes_preparation = 20;
 							<?php echo $order->get_shipping_total() > 0 ? wp_kses_post( wc_price( $order->get_shipping_total() ) ) : 'Gratuit'; ?>
 						</span>
 					</li>
+
+					<?php /* US-10.3 : code promo (les produits sont affichés avant la réduction) */ ?>
+					<?php foreach ( $order->get_coupon_codes() as $code_promo ) : ?>
+						<li class="merci-recap__ligne merci-recap__ligne--promo">
+							<span class="merci-recap__produit">Code <?php echo esc_html( strtoupper( $code_promo ) ); ?></span>
+							<span class="merci-recap__prix">−<?php echo wp_kses_post( wc_price( (float) $order->get_discount_total() + (float) $order->get_discount_tax() ) ); ?></span>
+						</li>
+					<?php endforeach; ?>
 				</ul>
 			</section>
 

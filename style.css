@@ -2891,6 +2891,136 @@ html {
   }
 }
 
+/* US-10.2 / US-10.3 : bloc "Code promo" du panier */
+.panier-promo {
+  max-width: 27rem;
+  margin: 0 0 2.5rem;
+}
+
+.panier-promo__titre {
+  margin: 0 0 1rem;
+  font-family: var(--font-grand-titre);
+  font-weight: normal;
+  font-size: 3rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* Champ + bouton "Appliquer" côte à côte */
+.panier-promo__formulaire {
+  display: flex;
+}
+
+.panier-promo .panier-promo__champ {
+  flex: 1;
+  min-width: 0;
+  padding: 0.75rem 0.88rem;
+  border: 0.06rem solid var(--gris-bordure);
+  border-radius: 0;
+  background: var(--blanc);
+  box-shadow: none;
+  font-size: 0.94rem;
+}
+
+.panier-promo .panier-promo__champ--erreur {
+  border-color: var(--rouille);
+}
+
+.panier-promo .panier-promo__bouton {
+  margin: 0;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.94rem;
+}
+
+/* Code appliqué : cadre vert avec le lien "Retirer" */
+.panier-promo__applique {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0.88rem;
+  border: 0.06rem solid var(--vert);
+}
+
+.panier-promo__code {
+  font-family: var(--font-titre);
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.panier-promo__description {
+  margin-left: 0.5rem;
+  font-family: var(--font-texte);
+  font-size: 0.81rem;
+  text-transform: none;
+  color: var(--vert);
+}
+
+.panier-promo .panier-promo__retirer {
+  font-size: 0.81rem;
+  color: var(--noir);
+  text-decoration: underline;
+}
+
+.panier-promo .panier-promo__retirer:hover {
+  color: var(--rouille);
+}
+
+/* Message sous le champ : vert si c'est bon, rouille si c'est une erreur */
+.panier-promo__message {
+  margin: 0.5rem 0 0;
+  font-size: 0.81rem;
+}
+
+.panier-promo__message--succes {
+  color: var(--vert);
+}
+
+.panier-promo__message--erreur {
+  color: var(--rouille);
+}
+
+/* Sous-total et réduction au-dessus du total, dans le même cadre */
+.panier-remises {
+  margin: 0;
+  padding: 1rem 1.5rem 0.25rem;
+  border: 0.06rem solid var(--gris);
+  border-bottom: 0;
+  list-style: none;
+}
+
+.panier-remises__ligne {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 0 0.5rem;
+  font-size: 0.94rem;
+}
+
+.panier-remises__ligne--promo {
+  color: var(--rouille);
+}
+
+.panier-remises + .panier-total {
+  border-top: 0.13rem dotted var(--noir);
+}
+
+/* Mobile : le bloc prend toute la largeur */
+@media (max-width: 47.94rem) {
+  .panier-promo {
+    max-width: none;
+  }
+
+  .panier-promo__titre {
+    font-size: 2rem;
+  }
+}
+
+/* US-10.3 : ligne du code promo en rouille (confirmation et détail de commande) */
+.merci-recap__ligne--promo,
+.commande-detail__ligne--promo {
+  color: var(--rouille);
+}
+
 /* DEBUT E-MAILS
  * US-8.2 / US-8.4 : style des e-mails du Watson's Pub.
  * Cette partie ne change rien sur le site : functions.php la lit et la donne à WooCommerce pour les e-mails.

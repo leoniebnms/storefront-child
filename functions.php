@@ -1024,7 +1024,16 @@ function watsons_mail_recapitulatif( $commande ) {
 			'<tr class="mail-recap__produit"><td class="mail-recap__nom">%1$s%2$s</td><td class="mail-recap__prix">%3$s</td></tr>',
 			esc_html( $nom ),
 			$options ? '<span class="mail-recap__options">' . wp_strip_all_tags( $options ) . '</span>' : '',
-			wc_price( $commande->get_line_total( $article, true ), $devise )
+			wc_price( $commande->get_line_subtotal( $article, true ), $devise )
+		);
+	}
+
+	// US-10.3 : code promo (les produits sont affichés avant la réduction).
+	foreach ( $commande->get_coupon_codes() as $code_promo ) {
+		$lignes .= sprintf(
+			'<tr class="mail-recap__info mail-recap__info--premiere"><td>Code %1$s</td><td class="mail-recap__prix">−%2$s</td></tr>',
+			esc_html( strtoupper( $code_promo ) ),
+			wc_price( (float) $commande->get_discount_total() + (float) $commande->get_discount_tax(), $devise )
 		);
 	}
 
@@ -1274,3 +1283,91 @@ add_filter( 'woocommerce_email_subject_customer_processing_order', function ( $o
 
 	return $objet;
 }, 10, 2 );
+
+/** US-10.3 : code promo dans le panier (le bloc est dans woocommerce/cart/cart-totals.php) */
+
+/**
+ * Boutons "Appliquer" et "Retirer" du bloc "Code promo".
+ * Le message (réussite ou erreur) est gardé pour l'afficher sous le champ, et non en haut de la page.
+ */
+add_action( 'template_redirect', function () {
+	if ( ! function_exists( 'is_cart' ) || ! is_cart() || ! WC()->cart ) {
+		return;
+	}
+
+	// phpcs:disable WordPress.Security.NonceVerification -- le nonce est vérifié juste en dessous.
+	$ajouter = isset( $_POST['watsons_code_promo'] );
+	$retirer = isset( $_GET['retirer_code'] );
+
+	if ( ! $ajouter && ! $retirer ) {
+		return;
+	}
+
+	$nonce = $ajouter
+		? ( isset( $_POST['watsons-promo-nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['watsons-promo-nonce'] ) ) : '' )
+		: ( isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '' );
+
+	if ( ! wp_verify_nonce( $nonce, 'watsons_code_promo' ) ) {
+		return;
+	}
+
+	$code = wc_format_coupon_code( wp_unslash( $ajouter ? $_POST['watsons_code_promo'] : $_GET['retirer_code'] ) );
+	// phpcs:enable
+
+	// On met de côté les autres messages de la page, pour ne garder que celui du code promo.
+	$autres_messages = wc_get_notices();
+	wc_clear_notices();
+
+	if ( $retirer ) {
+		WC()->cart->remove_coupon( $code );
+		WC()->cart->calculate_totals();
+		$message = array( 'type' => 'success', 'texte' => 'Le code ' . strtoupper( $code ) . ' a été retiré.' );
+	} elseif ( '' === $code ) {
+		$message = array( 'type' => 'error', 'texte' => 'Saisissez un code promo.' );
+	} else {
+		WC()->cart->apply_coupon( $code );
+
+		// WooCommerce a laissé un message : erreur en priorité, sinon réussite.
+		$messages = wc_get_notices();
+		$type     = ! empty( $messages['error'] ) ? 'error' : 'success';
+		$texte    = ! empty( $messages[ $type ][0]['notice'] ) ? $messages[ $type ][0]['notice'] : '';
+		$message  = array( 'type' => $type, 'texte' => wp_strip_all_tags( $texte ) );
+	}
+
+	wc_set_notices( $autres_messages );
+
+	$message['code'] = $code;
+	WC()->session->set( 'watsons_message_promo', $message );
+
+	wp_safe_redirect( wc_get_cart_url() );
+	exit;
+} );
+
+// Messages d'erreur des maquettes : code erroné, expiré, indisponible pour le panier.
+add_filter( 'woocommerce_coupon_error', function ( $erreur, $code_erreur, $coupon ) {
+	switch ( (int) $code_erreur ) {
+		case WC_Coupon::E_WC_COUPON_NOT_EXIST:
+			return "Ce code n'existe pas. Vérifiez l'orthographe.";
+
+		case WC_Coupon::E_WC_COUPON_EXPIRED:
+			$date = ( $coupon instanceof WC_Coupon && $coupon->get_date_expires() ) ? ' le ' . wc_format_datetime( $coupon->get_date_expires(), 'd/m/Y' ) : '';
+			return 'Ce code a expiré' . $date . '.';
+
+		case WC_Coupon::E_WC_COUPON_NOT_APPLICABLE:
+			return "Ce code ne s'applique à aucun produit de votre panier.";
+
+		case WC_Coupon::E_WC_COUPON_ALREADY_APPLIED:
+			return 'Ce code est déjà appliqué.';
+	}
+
+	return $erreur;
+}, 10, 3 );
+
+// Message de réussite : "Le code PUB10 a bien été appliqué."
+add_filter( 'woocommerce_coupon_message', function ( $message, $code_message, $coupon ) {
+	if ( WC_Coupon::WC_COUPON_SUCCESS === (int) $code_message && $coupon instanceof WC_Coupon ) {
+		return 'Le code ' . strtoupper( $coupon->get_code() ) . ' a bien été appliqué.';
+	}
+
+	return $message;
+}, 10, 3 );
