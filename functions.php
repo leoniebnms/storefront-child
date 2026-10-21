@@ -1175,3 +1175,73 @@ add_filter( 'woocommerce_email_actions', function ( $actions ) {
 	$actions[] = 'woocommerce_order_status_prete';
 	return $actions;
 } );
+
+/** US-9.3 : mes commandes, détail d'une commande et annulation par le client */
+
+// Statuts pour lesquels le client peut encore annuler sa commande (pas encore prête ni expédiée).
+function watsons_commande_annulable( $commande ) {
+	return $commande instanceof WC_Order && $commande->has_status( array( 'pending', 'on-hold', 'processing' ) );
+}
+
+// La commande a-t-elle déjà été payée ? (virement reçu : "En cours" et pas en paiement au retrait)
+function watsons_commande_payee( $commande ) {
+	return $commande->has_status( 'processing' ) && 'cod' !== $commande->get_payment_method();
+}
+
+// Badge de statut : "En cours", "Prête", "Annulée"... avec une couleur par statut (voir style.css).
+function watsons_badge_statut( $commande ) {
+	return sprintf(
+		'<span class="commande-statut commande-statut--%1$s">%2$s</span>',
+		esc_attr( $commande->get_status() ),
+		esc_html( wc_get_order_status_name( $commande->get_status() ) )
+	);
+}
+
+// Titre de la page détail : "Commande N°97".
+add_filter( 'woocommerce_endpoint_view-order_title', function ( $titre ) {
+	$commande = wc_get_order( absint( get_query_var( 'view-order' ) ) );
+	return $commande ? 'Commande N°' . $commande->get_order_number() : $titre;
+} );
+
+// Lien "Retour à mes commandes" au-dessus du titre (même composant que "Retour à la carte").
+add_action( 'storefront_page_before', function () {
+	if ( ! is_wc_endpoint_url( 'view-order' ) ) {
+		return;
+	}
+
+	printf(
+		'<a class="retour-carte" href="%s"><svg class="retour-carte__icone" viewBox="0 0 9 14" aria-hidden="true"><path d="M8 1 2 7l6 6"/></svg>Retour à mes commandes</a>',
+		esc_url( wc_get_page_permalink( 'myaccount' ) )
+	);
+} );
+
+/**
+ * Bouton "Oui, annuler ma commande" : annulation par le client.
+ * WooCommerce remet alors le stock à jour tout seul (US-9.1).
+ */
+add_action( 'template_redirect', function () {
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- le nonce est vérifié juste en dessous.
+	if ( empty( $_POST['watsons_annuler_commande'] ) || ! is_user_logged_in() ) {
+		return;
+	}
+
+	$nonce = isset( $_POST['watsons-annulation-nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['watsons-annulation-nonce'] ) ) : '';
+	if ( ! wp_verify_nonce( $nonce, 'watsons_annuler_commande' ) ) {
+		return;
+	}
+
+	$commande = wc_get_order( absint( $_POST['watsons_annuler_commande'] ) );
+	// phpcs:enable
+
+	// Seulement ses propres commandes, et seulement si elles peuvent encore être annulées.
+	if ( ! $commande || (int) $commande->get_customer_id() !== get_current_user_id() || ! watsons_commande_annulable( $commande ) ) {
+		return;
+	}
+
+	// On note si le client avait déjà payé : il faudra le rembourser (mails de l'étape 4).
+	$commande->update_meta_data( '_watsons_a_rembourser', watsons_commande_payee( $commande ) ? 'oui' : 'non' );
+	$commande->update_status( 'cancelled', 'Commande annulée par le client depuis son compte.' );
+
+	wp_safe_redirect( add_query_arg( 'annulee', '1', $commande->get_view_order_url() ) );
+	exit;
+} );

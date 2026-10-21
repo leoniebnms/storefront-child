@@ -7,6 +7,7 @@ Version: 1.6.1
 /* Couleurs et fonts de la maquette */
 :root {
   --rouille: #b03d1a;
+  --vert: #3c7a3c;
   --noir: #000;
   --blanc: #fff;
   --orange: #c97a00;
@@ -2646,6 +2647,247 @@ html {
 
   .compte-formulaire__ligne {
     column-gap: 1.25rem;
+  }
+}
+
+/* US-9.3 : mes commandes, détail d'une commande et annulation */
+
+/* Badge de statut : une couleur par statut */
+.commande-statut {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: var(--gris);
+  color: var(--blanc);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.commande-statut--processing {
+  background: var(--orange);
+}
+
+.commande-statut--prete {
+  background: var(--rouille);
+}
+
+.commande-statut--completed {
+  background: var(--vert);
+}
+
+.commande-statut--cancelled,
+.commande-statut--refunded,
+.commande-statut--failed {
+  background: var(--gris-fonce);
+}
+
+/* Tableau "Mes commandes" : en-tête gris, une ligne sur deux en gris */
+.compte-cadre--tableau {
+  padding: 0;
+}
+
+.compte .compte-commandes {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-collapse: collapse;
+}
+
+.compte .compte-commandes__entete {
+  padding: 0.75rem 1rem;
+  background: var(--gris-entete);
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-size: 0.94rem;
+  text-align: left;
+}
+
+.compte .compte-commandes__cellule {
+  padding: 1rem;
+  border: 0;
+  background: transparent;
+  font-size: 0.88rem;
+  vertical-align: middle;
+}
+
+.compte .compte-commandes__ligne:nth-child(even) .compte-commandes__cellule {
+  background: var(--gris-fond);
+}
+
+.compte-commandes__numero {
+  font-family: var(--font-titre);
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+/* Bouton "Voir" : petit bouton rouille */
+.compte-commandes__bouton {
+  display: inline-block;
+  padding: 0.38rem 1rem;
+  background: var(--rouille);
+  color: var(--blanc);
+  font-size: 0.81rem;
+  text-decoration: none;
+}
+
+.compte-commandes__bouton:hover,
+.compte-commandes__bouton:focus {
+  background: var(--noir);
+  color: var(--blanc);
+}
+
+.compte-commandes__vide {
+  margin: 0;
+  padding: 1.5rem;
+  font-size: 0.94rem;
+}
+
+/* Page détail : "Passée le ... – En cours – Livraison à domicile – Virement bancaire" */
+.commande-detail__infos {
+  margin: 0 0 1.75rem;
+  font-size: 0.94rem;
+  line-height: 1.8;
+  text-align: center;
+}
+
+/* Titres des cadres centrés */
+.woocommerce-account .compte .commande-detail__titre {
+  text-align: center;
+}
+
+/* Récapitulatif : une ligne par produit, pointillés, total sous un trait */
+.commande-detail__liste {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.commande-detail__ligne {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  font-family: var(--font-titre);
+  font-size: 0.81rem;
+  text-transform: uppercase;
+}
+
+.commande-detail__ligne--produit {
+  border-bottom: 0.13rem dotted var(--noir);
+}
+
+.commande-detail__ligne--total {
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 0.06rem solid var(--noir);
+  font-family: var(--font-texte);
+  font-weight: 700;
+  text-transform: none;
+}
+
+.commande-detail__options {
+  display: block;
+  font-family: var(--font-texte);
+  font-size: 0.75rem;
+  text-transform: none;
+  color: var(--gris);
+}
+
+.commande-detail__adresse {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+/* Bouton "Annuler ma commande" et texte en dessous */
+.compte .commande-detail__annuler {
+  margin-top: 1.75rem;
+}
+
+.commande-detail__aide {
+  margin: 0.75rem 0 0;
+  font-size: 0.81rem;
+  line-height: 1.5;
+  color: var(--gris-fonce);
+}
+
+/* Message "Votre commande a bien été annulée" */
+.commande-detail__message {
+  margin: 0 0 1.75rem;
+  padding: 0.75rem 1rem;
+  border: 0.06rem solid var(--rouille);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+/* Fenêtre de confirmation, au centre de l'écran sur un fond gris foncé */
+.commande-confirmation {
+  width: min(32rem, 90vw);
+  margin: auto;
+  padding: 2rem;
+  border: 0;
+  background: var(--blanc);
+  text-align: center;
+}
+
+.commande-confirmation::backdrop {
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.commande-confirmation__titre {
+  margin: 0 0 1rem;
+  font-family: var(--font-grand-titre);
+  font-synthesis: none;
+  font-size: 2rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.commande-confirmation__texte {
+  margin: 0 0 1.5rem;
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+
+.commande-confirmation__boutons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.commande-confirmation__boutons .compte-bouton {
+  margin: 0;
+  font-size: 0.81rem;
+}
+
+/* Mobile : pas de date ni de bouton "Voir" (le numéro est cliquable), boutons l'un sous l'autre */
+@media (max-width: 47.94rem) {
+  .compte .compte-commandes__entete--date,
+  .compte .compte-commandes__entete--voir,
+  .compte .compte-commandes__cellule--date,
+  .compte .compte-commandes__cellule--voir {
+    display: none;
+  }
+
+  .compte .compte-commandes__cellule,
+  .compte .compte-commandes__entete {
+    padding: 0.75rem;
+  }
+
+  .compte-commandes__numero {
+    text-decoration: underline;
+  }
+
+  .commande-confirmation {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .commande-confirmation__titre {
+    font-size: 1.5rem;
+  }
+
+  .commande-confirmation__boutons {
+    grid-template-columns: 1fr;
   }
 }
 
