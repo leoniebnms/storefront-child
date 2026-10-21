@@ -2648,3 +2648,217 @@ html {
     column-gap: 1.25rem;
   }
 }
+
+/* DEBUT E-MAILS
+ * US-8.2 / US-8.4 : style des e-mails du Watson's Pub.
+ * Cette partie ne change rien sur le site : functions.php la lit et la donne à WooCommerce pour les e-mails.
+ *
+ * WooCommerce lit ce fichier et recopie chaque règle dans les balises du mail
+ * (les messageries ne lisent pas les feuilles de style).
+ * Exception à la règle des rem : dans les mails on garde des px,
+ * beaucoup de messageries (Outlook, Gmail) gèrent mal les rem et les variables CSS.
+ */
+
+/* Fond gris et mail blanc de 600px au centre */
+.mail-fond {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f3f3f3;
+}
+
+.mail-fond__cellule {
+  padding: 32px 12px;
+}
+
+.mail {
+  width: 100%;
+  max-width: 600px;
+  background-color: #ffffff;
+}
+
+/* Haut : logo et titre */
+.mail__haut {
+  padding: 40px 24px 0;
+  text-align: center;
+}
+
+.mail__logo {
+  display: block;
+  margin: 0 auto;
+  height: auto;
+  border: 0;
+}
+
+.mail__corps {
+  padding: 16px 40px 40px;
+  font-family: Lato, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #2a2a2a;
+}
+
+.mail__titre {
+  margin: 0;
+  font-family: Oswald, "Arial Narrow", Arial, sans-serif;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.15;
+  text-align: center;
+  text-transform: uppercase;
+  color: #2a2a2a;
+}
+
+.mail__sous-titre {
+  margin: 6px 0 0;
+  font-size: 14px;
+  text-align: center;
+  color: #2a2a2a;
+}
+
+/* Badge N° de commande */
+.mail__numero {
+  margin: 24px auto 40px;
+}
+
+.mail__numero-texte {
+  padding: 7px 20px;
+  background-color: #b03d1a;
+  font-family: Oswald, "Arial Narrow", Arial, sans-serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #ffffff;
+}
+
+.mail__texte {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: #2a2a2a;
+}
+
+/* Cadres : coordonnées bancaires, récapitulatif, adresse, instructions */
+.mail-cadre {
+  width: 100%;
+  margin: 0 0 10px;
+  border: 1px solid #cfcfcf;
+  border-collapse: separate;
+}
+
+.mail-cadre--rouille {
+  border-color: #b03d1a;
+}
+
+.mail-cadre__cellule {
+  padding: 18px 20px;
+}
+
+.mail-cadre__titre {
+  margin: 0 0 12px;
+  font-family: Oswald, "Arial Narrow", Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: #2a2a2a;
+}
+
+.mail-cadre--rouille .mail-cadre__titre {
+  color: #b03d1a;
+}
+
+.mail-cadre__texte {
+  margin: 0 0 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #2a2a2a;
+}
+
+/* Récapitulatif : produits séparés par des pointillés, total sous un trait */
+.mail-recap td {
+  padding: 7px 0;
+  font-size: 11px;
+  vertical-align: top;
+  color: #2a2a2a;
+}
+
+.mail-recap__nom {
+  text-transform: uppercase;
+}
+
+.mail-recap__options {
+  display: block;
+  font-size: 11px;
+  text-transform: none;
+  color: #8c8c8c;
+}
+
+.mail-recap__prix {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.mail-recap__produit td {
+  border-bottom: 1px dashed #cfcfcf;
+}
+
+.mail-recap__info td {
+  padding: 4px 0;
+  text-transform: uppercase;
+}
+
+.mail-recap__info--premiere td {
+  padding-top: 10px;
+}
+
+.mail-recap__total td {
+  padding-top: 10px;
+  border-top: 2px solid #2a2a2a;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Pied de page rouille */
+.mail__pied {
+  padding: 24px;
+  background-color: #b03d1a;
+  text-align: center;
+}
+
+.mail__pied-titre {
+  margin: 0 0 10px;
+  font-family: Oswald, "Arial Narrow", Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.mail__pied-texte p {
+  margin: 0;
+  font-family: Lato, Helvetica, Arial, sans-serif;
+  font-size: 11px;
+  line-height: 1.6;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.mail__pied-texte a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .mail-fond__cellule {
+    padding: 0 !important;
+  }
+
+  .mail__corps {
+    padding: 16px 20px 32px !important;
+  }
+
+  .mail__titre {
+    font-size: 24px !important;
+  }
+}
+/* FIN E-MAILS */

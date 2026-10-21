@@ -1106,66 +1106,72 @@ function watsons_mail_instructions_retrait( $commande, $texte ) {
 }
 
 /**
- * US-8.2 / US-8.4 : le style des e-mails.
- * Dans un mail, le CSS doit être écrit dans chaque balise : WooCommerce le fait tout seul avec ce CSS.
- * Les couleurs sont celles réglées dans WooCommerce > Réglages > E-mails.
- * Exception à la règle des rem : dans les mails on garde des px, beaucoup de messageries (Outlook, Gmail) gèrent mal les rem.
+ * US-8.2 / US-8.4 : le style des e-mails est à la fin de style.css,
+ * entre les commentaires "DEBUT E-MAILS" et "FIN E-MAILS".
  */
 add_filter( 'woocommerce_email_styles', function ( $css ) {
-	$rouille = get_option( 'woocommerce_email_base_color' ) ? get_option( 'woocommerce_email_base_color' ) : '#b03d1a';
-	$fond    = get_option( 'woocommerce_email_background_color' ) ? get_option( 'woocommerce_email_background_color' ) : '#f3f3f3';
-	$texte   = get_option( 'woocommerce_email_text_color' ) ? get_option( 'woocommerce_email_text_color' ) : '#2a2a2a';
-	$titre   = "Oswald, 'Arial Narrow', Arial, sans-serif";
+	$feuille = file_get_contents( get_stylesheet_directory() . '/style.css' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- fichier du thème.
+	$debut   = strpos( $feuille, '/* DEBUT E-MAILS' );
+	$fin     = strpos( $feuille, '/* FIN E-MAILS */' );
 
-	$css .= "
-		/* Fond gris et mail blanc de 600px au centre */
-		.mail-fond { width: 100%; margin: 0; padding: 0; background-color: {$fond}; }
-		.mail-fond__cellule { padding: 32px 12px; }
-		.mail { width: 100%; max-width: 600px; background-color: #ffffff; }
-
-		/* Haut : logo et titre */
-		.mail__haut { padding: 40px 24px 0; text-align: center; }
-		.mail__logo { display: block; margin: 0 auto; height: auto; border: 0; }
-		.mail__corps { padding: 16px 40px 40px; font-family: Lato, Helvetica, Arial, sans-serif; font-size: 14px; line-height: 1.5; color: {$texte}; }
-		.mail__titre { margin: 0; font-family: {$titre}; font-size: 32px; font-weight: 400; line-height: 1.15; text-align: center; text-transform: uppercase; color: {$texte}; }
-		.mail__sous-titre { margin: 6px 0 0; font-size: 14px; text-align: center; color: {$texte}; }
-
-		/* Badge N° de commande */
-		.mail__numero { margin: 24px auto 40px; }
-		.mail__numero-texte { padding: 7px 20px; background-color: {$rouille}; font-family: {$titre}; font-size: 13px; letter-spacing: 1px; color: #ffffff; }
-		.mail__texte { margin: 0 0 12px; font-size: 13px; color: {$texte}; }
-
-		/* Cadres : coordonnées bancaires, récapitulatif, adresse, instructions */
-		.mail-cadre { width: 100%; margin: 0 0 10px; border: 1px solid #cfcfcf; border-collapse: separate; }
-		.mail-cadre--rouille { border-color: {$rouille}; }
-		.mail-cadre__cellule { padding: 18px 20px; }
-		.mail-cadre__titre { margin: 0 0 12px; font-family: {$titre}; font-size: 17px; font-weight: 400; line-height: 1.2; text-transform: uppercase; color: {$texte}; }
-		.mail-cadre--rouille .mail-cadre__titre { color: {$rouille}; }
-		.mail-cadre__texte { margin: 0 0 4px; font-size: 12px; line-height: 1.5; color: {$texte}; }
-
-		/* Récapitulatif : produits séparés par des pointillés, total sous un trait */
-		.mail-recap td { padding: 7px 0; font-size: 11px; vertical-align: top; color: {$texte}; }
-		.mail-recap__nom { text-transform: uppercase; }
-		.mail-recap__options { display: block; font-size: 11px; text-transform: none; color: #8c8c8c; }
-		.mail-recap__prix { text-align: right; white-space: nowrap; }
-		.mail-recap__produit td { border-bottom: 1px dashed #cfcfcf; }
-		.mail-recap__info td { padding: 4px 0; text-transform: uppercase; }
-		.mail-recap__info--premiere td { padding-top: 10px; }
-		.mail-recap__total td { padding-top: 10px; border-top: 2px solid {$texte}; font-size: 12px; font-weight: bold; }
-
-		/* Pied de page rouille */
-		.mail__pied { padding: 24px; background-color: {$rouille}; text-align: center; }
-		.mail__pied-titre { margin: 0 0 10px; font-family: {$titre}; font-size: 18px; font-weight: 400; text-transform: uppercase; color: #ffffff; }
-		.mail__pied-texte p { margin: 0; font-family: Lato, Helvetica, Arial, sans-serif; font-size: 11px; line-height: 1.6; text-transform: uppercase; color: #ffffff; }
-		.mail__pied-texte a { color: #ffffff; text-decoration: none; }
-
-		/* Mobile */
-		@media (max-width: 600px) {
-			.mail-fond__cellule { padding: 0 !important; }
-			.mail__corps { padding: 16px 20px 32px !important; }
-			.mail__titre { font-size: 24px !important; }
-		}
-	";
+	if ( false !== $debut && false !== $fin ) {
+		$css .= substr( $feuille, $debut, $fin - $debut );
+	}
 
 	return $css;
 }, 20 );
+
+
+/** US-9.2 : statut "Prête" pour les commandes à retirer en boutique */
+// 1. Le nouveau statut "Prête" (wc-prete).
+add_action( 'init', function () {
+	register_post_status(
+		'wc-prete',
+		array(
+			'label'                     => 'Prête',
+			'public'                    => false,
+			'exclude_from_search'       => false,
+			'show_in_admin_all_list'    => true,
+			'show_in_admin_status_list' => true,
+			/* translators: %s : nombre de commandes */
+			'label_count'               => _n_noop( 'Prête <span class="count">(%s)</span>', 'Prêtes <span class="count">(%s)</span>' ),
+		)
+	);
+} );
+
+// 2. "Prête" apparaît dans la liste des statuts de commande, juste après "En cours".
+add_filter( 'wc_order_statuses', function ( $statuts ) {
+	$nouveaux = array();
+
+	foreach ( $statuts as $cle => $nom ) {
+		$nouveaux[ $cle ] = $nom;
+
+		if ( 'wc-processing' === $cle ) {
+			$nouveaux['wc-prete'] = 'Prête';
+		}
+	}
+
+	return $nouveaux;
+} );
+
+// 3. Action groupée "Changer le statut en Prête" dans WooCommerce > Commandes.
+function watsons_action_groupee_prete( $actions ) {
+	$actions['mark_prete'] = 'Changer le statut en Prête';
+	return $actions;
+}
+add_filter( 'bulk_actions-woocommerce_page_wc-orders', 'watsons_action_groupee_prete' );
+add_filter( 'bulk_actions-edit-shop_order', 'watsons_action_groupee_prete' );
+
+// 4. Nouvel e-mail "Commande prête", envoyé quand la commande passe en "Prête".
+// La classe de l'e-mail est dans inc/class-watsons-email-commande-prete.php.
+add_filter( 'woocommerce_email_classes', function ( $emails ) {
+	require_once get_stylesheet_directory() . '/inc/class-watsons-email-commande-prete.php';
+	$emails['Watsons_Email_Commande_Prete'] = new Watsons_Email_Commande_Prete();
+	return $emails;
+} );
+
+// WooCommerce n'envoie un e-mail sur un changement de statut que si on le lui demande.
+add_filter( 'woocommerce_email_actions', function ( $actions ) {
+	$actions[] = 'woocommerce_order_status_prete';
+	return $actions;
+} );
