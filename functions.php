@@ -1508,3 +1508,39 @@ add_action( 'woocommerce_after_cart', function () {
 	// Les ventes croisées de tous les produits du panier, sans ceux qui y sont déjà.
 	watsons_bloc_suggestions( WC()->cart->get_cross_sells(), 'Complétez votre commande avec une boisson ou un dessert.' );
 } );
+
+/** US-12.1 : nouvelle taxonomie "Moments" pour les produits, indépendante des catégories */
+add_action( 'init', function () {
+	register_taxonomy(
+		'moment',
+		'product',
+		array(
+			'labels'            => array(
+				'name'          => 'Moments',
+				'singular_name' => 'Moment',
+				'menu_name'     => 'Moments',
+				'all_items'     => 'Tous les moments',
+				'edit_item'     => 'Modifier le moment',
+				'view_item'     => 'Voir le moment',
+				'add_new_item'  => 'Ajouter un moment',
+				'new_item_name' => 'Nom du nouveau moment',
+				'search_items'  => 'Rechercher un moment',
+				'not_found'     => 'Aucun moment',
+				'back_to_items' => '← Retour aux moments',
+			),
+			'public'            => true,
+			'hierarchical'      => true,   // Des cases à cocher dans la fiche produit, comme les catégories.
+			'show_admin_column' => true,   // Une colonne "Moments" dans la liste des produits.
+			'show_in_rest'      => true,
+			'query_var'         => 'moment',
+			'rewrite'           => array( 'slug' => 'moment' ),
+		)
+	);
+} );
+
+// Page d'un moment : tous ses produits, sans pagination.
+add_action( 'pre_get_posts', function ( $requete ) {
+	if ( ! is_admin() && $requete->is_main_query() && $requete->is_tax( 'moment' ) ) {
+		$requete->set( 'posts_per_page', -1 );
+	}
+} );

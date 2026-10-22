@@ -3419,6 +3419,161 @@ html {
   }
 }
 
+/* US-12.3 : page d'un moment (grille de produits) */
+
+/* Pas de colonne latérale : le contenu prend toute la largeur */
+.tax-moment .content-area {
+  float: none;
+  width: 100%;
+  margin: 0;
+}
+
+.moment__entete {
+  margin: 2.5rem 0 2rem;
+  text-align: center;
+}
+
+.moment__sur-titre {
+  margin: 0;
+  font-family: var(--font-titre);
+  font-size: 1rem;
+  letter-spacing: 0.06rem;
+  text-transform: uppercase;
+  color: var(--rouille);
+}
+
+.moment__titre {
+  margin: 0.25rem 0 0.75rem;
+  font-synthesis: none;
+  font-size: 4.5rem;
+  line-height: 1;
+}
+
+.moment__intro {
+  margin: 0;
+  font-size: 1.13rem;
+}
+
+/* Boutons Le midi / Le gouter / La soiree : style des filtres de la carte */
+.moment__onglets {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0 0 3rem;
+}
+
+.moment .carte-filtres__lien:not(.carte-filtres__lien--actif) {
+  color: var(--noir);
+}
+
+/* Grille de produits : 3 colonnes */
+.moment__grille {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+  max-width: 56rem;
+  margin: 0 auto 5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.produit-carte__photo {
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--gris-entete);
+}
+
+.produit-carte .produit-carte__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  object-fit: cover;
+}
+
+.produit-carte__categorie {
+  margin: 0.75rem 0 0;
+  font-size: 0.75rem;
+  color: var(--gris);
+}
+
+.produit-carte__nom {
+  margin: 0.13rem 0;
+  font-family: var(--font-grand-titre);
+  font-weight: normal;
+  font-synthesis: none;
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: uppercase;
+}
+
+.moment .produit-carte__nom a {
+  color: var(--noir);
+  text-decoration: none;
+}
+
+.moment .produit-carte__nom a:hover {
+  color: var(--rouille);
+}
+
+.produit-carte__prix,
+.produit-carte__prix .amount {
+  margin: 0 0 1rem;
+  font-size: 0.94rem;
+  color: var(--rouille);
+}
+
+/* Bouton "Choisir" / "Ajouter" : contour noir, rouille au survol */
+.moment .produit-carte__bouton {
+  display: block;
+  padding: 0.75rem 1rem;
+  border: 0.06rem solid var(--noir);
+  color: var(--noir);
+  font-size: 0.88rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.moment .produit-carte__bouton:hover,
+.moment .produit-carte__bouton:focus {
+  border-color: var(--rouille);
+  background: var(--rouille);
+  color: var(--blanc);
+}
+
+/* Mobile : 2 colonnes */
+@media (max-width: 47.94rem) {
+  .moment__titre {
+    font-size: 3rem;
+  }
+
+  .moment__intro {
+    font-size: 0.94rem;
+  }
+
+  .moment__onglets {
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .moment__onglets .carte-filtres__lien {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .moment__grille {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem 0.88rem;
+  }
+
+  .produit-carte__nom {
+    font-size: 1.38rem;
+  }
+}
+
 /* DEBUT E-MAILS
  * US-8.2 / US-8.4 : style des e-mails du Watson's Pub.
  * Cette partie ne change rien sur le site : functions.php la lit et la donne à WooCommerce pour les e-mails.
