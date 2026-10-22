@@ -1371,3 +1371,66 @@ add_filter( 'woocommerce_coupon_message', function ( $message, $code_message, $c
 
 	return $message;
 }, 10, 3 );
+
+/** US-11.1 : type de contenu "Équipe" : une page par membre de l'équipe, et une page qui les liste tous */
+add_action( 'init', function () {
+	register_post_type(
+		'membre',
+		array(
+			'labels'        => array(
+				'name'                  => 'Équipe',
+				'singular_name'         => "Membre de l'équipe",
+				'menu_name'             => 'Équipe',
+				'all_items'             => 'Tous les membres',
+				'add_new'               => 'Ajouter un membre',
+				'add_new_item'          => "Ajouter un membre de l'équipe",
+				'edit_item'             => 'Modifier le membre',
+				'new_item'              => 'Nouveau membre',
+				'view_item'             => 'Voir le profil',
+				'search_items'          => 'Rechercher un membre',
+				'not_found'             => 'Aucun membre',
+				'archives'              => "L'équipe",
+				'featured_image'        => 'Photo',
+				'set_featured_image'    => 'Choisir la photo',
+				'remove_featured_image' => 'Retirer la photo',
+				'use_featured_image'    => 'Utiliser comme photo',
+			),
+			'public'        => true,
+			'has_archive'   => 'equipe',                // La page qui liste tous les membres.
+			'rewrite'       => array( 'slug' => 'equipe' ),
+			'menu_icon'     => 'dashicons-groups',
+			'menu_position' => 25,
+			// Titre = prénom et nom, éditeur = présentation, image mise en avant = photo, extrait = phrase courte, attributs = ordre d'affichage.
+			'supports'      => array( 'title', 'editor', 'thumbnail', 'excerpt', 'page-attributes' ),
+		)
+	);
+} );
+
+// Dans l'admin : "Prénom et nom" au lieu de "Saisissez le titre".
+add_filter( 'enter_title_here', function ( $texte, $publication ) {
+	return 'membre' === $publication->post_type ? 'Prénom et nom' : $texte;
+}, 10, 2 );
+
+// Page "L'équipe" : tous les membres, dans l'ordre choisi (champ "Ordre" du membre), puis par nom.
+add_action( 'pre_get_posts', function ( $requete ) {
+	if ( ! is_admin() && $requete->is_main_query() && $requete->is_post_type_archive( 'membre' ) ) {
+		$requete->set( 'orderby', array( 'menu_order' => 'ASC', 'title' => 'ASC' ) );
+		$requete->set( 'posts_per_page', -1 );
+	}
+} );
+
+/** US-11.3 : petites fonctions utilisées par archive-membre.php et single-membre.php */
+
+// Un champ SCF du membre (poste, arrivee, plat_prefere, specialite).
+function watsons_champ_membre( $nom, $id = null ) {
+	return trim( (string) get_post_meta( $id ? $id : get_the_ID(), $nom, true ) );
+}
+
+// La photo du membre (image mise en avant). Sans photo, le cadre reste gris comme sur la maquette.
+function watsons_photo_membre( $id = null ) {
+	$id = $id ? $id : get_the_ID();
+
+	if ( has_post_thumbnail( $id ) ) {
+		echo get_the_post_thumbnail( $id, 'medium_large', array( 'class' => 'membre-photo', 'alt' => get_the_title( $id ) ) );
+	}
+}

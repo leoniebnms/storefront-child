@@ -3021,6 +3021,265 @@ html {
   color: var(--rouille);
 }
 
+/* US-11.3 / US-11.4 : pages "L'équipe" et profil d'un membre */
+
+/* Pas de colonne latérale : le contenu prend toute la largeur */
+.post-type-archive-membre .content-area,
+.single-membre .content-area {
+  float: none;
+  width: 100%;
+  margin: 0;
+}
+
+/* Photo : carré gris tant qu'il n'y a pas de photo */
+.membre-carte__photo,
+.membre__photo,
+.membre-mini__photo {
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--gris-entete);
+}
+
+.membre-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Page "L'équipe" : titre, phrase, puis les cartes sur 3 colonnes */
+.equipe__entete {
+  margin: 2.5rem 0 3rem;
+  text-align: center;
+}
+
+.equipe__titre {
+  margin: 0 0 1rem;
+  font-synthesis: none;
+  font-size: 4.5rem;
+  line-height: 1;
+}
+
+.equipe__intro {
+  max-width: 32rem;
+  margin: 0 auto;
+  font-size: 1.13rem;
+}
+
+.equipe__liste {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3.13rem;
+  max-width: 56rem;
+  margin: 0 auto 5rem;
+}
+
+.membre-carte {
+  text-align: center;
+}
+
+.membre-carte__nom,
+.membre-autres__titre,
+.membre-mini__nom {
+  font-family: var(--font-grand-titre);
+  font-weight: normal;
+  font-synthesis: none;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: uppercase;
+}
+
+.membre-carte__nom {
+  margin: 1.25rem 0 0.25rem;
+  font-size: 2rem;
+}
+
+.membre-carte__poste {
+  margin: 0 0 1rem;
+  color: var(--rouille);
+}
+
+.membre-carte__phrase {
+  margin: 0 0 1.25rem;
+  font-size: 0.81rem;
+  line-height: 1.5;
+}
+
+/* Bouton "Voir le profil" : contour noir */
+.membre-carte .membre-carte__bouton {
+  display: block;
+  padding: 0.75rem 1rem;
+  border: 0.06rem solid var(--noir);
+  color: var(--noir);
+  font-size: 0.88rem;
+  text-decoration: none;
+}
+
+.membre-carte .membre-carte__bouton:hover,
+.membre-carte .membre-carte__bouton:focus {
+  border-color: var(--rouille);
+  background: var(--rouille);
+  color: var(--blanc);
+}
+
+/* Profil : photo à gauche, texte à droite */
+.membre {
+  display: grid;
+  grid-template-columns: 22rem 1fr;
+  gap: 3rem;
+  align-items: start;
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+.membre__nom {
+  margin: 0;
+  font-synthesis: none;
+  font-size: 3.5rem;
+  line-height: 1;
+}
+
+.membre__poste {
+  margin: 0.25rem 0 1.5rem;
+  font-size: 1.25rem;
+  color: var(--rouille);
+}
+
+.membre__presentation p {
+  margin: 0 0 1rem;
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+/* Infos en pointillés : libellé à gauche, valeur à droite */
+.membre__infos {
+  margin: 1.5rem 0 0;
+  border-top: 0.13rem dotted var(--noir);
+}
+
+.membre__info {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.63rem 0;
+  border-bottom: 0.13rem dotted var(--noir);
+}
+
+.membre__info-libelle {
+  font-family: var(--font-titre);
+  font-weight: 400;
+}
+
+.membre__info-valeur {
+  margin: 0;
+}
+
+/* Le reste de l'équipe */
+.membre-autres {
+  max-width: 56rem;
+  margin: 5rem auto;
+}
+
+.membre-autres__titre {
+  margin: 0 0 1.5rem;
+  font-size: 3rem;
+}
+
+.membre-autres__liste {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.membre-autres .membre-mini {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  color: var(--noir);
+  text-decoration: none;
+}
+
+.membre-mini__photo {
+  flex: 0 0 7rem;
+}
+
+.membre-mini__nom {
+  display: block;
+  font-size: 1.5rem;
+}
+
+.membre-mini__poste {
+  display: block;
+  font-size: 0.81rem;
+  color: var(--rouille);
+}
+
+.membre-autres .membre-mini:hover .membre-mini__nom {
+  color: var(--rouille);
+}
+
+/* Mobile : une seule colonne, tout centré */
+@media (max-width: 47.94rem) {
+  .equipe__titre {
+    font-size: 3rem;
+  }
+
+  .equipe__intro {
+    font-size: 0.94rem;
+  }
+
+  .equipe__liste {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    max-width: 20rem;
+  }
+
+  .membre {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .membre__nom {
+    font-size: 2.5rem;
+  }
+
+  .membre__info {
+    text-align: left;
+  }
+
+  .membre-autres {
+    margin: 3rem auto;
+  }
+
+  .membre-autres__titre {
+    font-size: 2rem;
+  }
+
+  .membre-autres__liste {
+    gap: 1rem;
+  }
+
+  .membre-autres .membre-mini {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .membre-mini__photo {
+    flex-basis: auto;
+    width: 100%;
+  }
+
+  .membre-mini__nom {
+    font-size: 1.13rem;
+  }
+}
+
 /* DEBUT E-MAILS
  * US-8.2 / US-8.4 : style des e-mails du Watson's Pub.
  * Cette partie ne change rien sur le site : functions.php la lit et la donne à WooCommerce pour les e-mails.
