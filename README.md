@@ -154,3 +154,8 @@ rm ~/sae301-dev.sql
 
 - **Mis en prod :** produits complémentaires associés dans l'admin (Produit -> Produits liés -> Ventes croisées) : Sprite, Coca Cola et Crêpe pour les 3 burgers. Bloc "Ils se completent" comme sur la maquette : sous la fiche produit (les ventes croisées du produit) et sous le total du panier (les ventes croisées des produits du panier, sans ceux déjà ajoutés). 3 suggestions au maximum, avec photo, nom, prix et bouton "Ajouter" (ou "Choisir" pour un produit à options). Produits épuisés non proposés.
 - **Remarques :** commit XXXXXXX, thème en version 1.10.0. Pas de nouveau template : le bloc est ajouté par des hooks WooCommerce (woocommerce_after_single_product et woocommerce_after_cart), et le bloc de ventes croisées par défaut du panier a été retiré. Base importée en prod pour les produits liés.
+
+### 22/10/2026 – IT 12 : Taxonomies
+
+- **Mis en prod :** nouvelle taxonomie "Moments" pour les produits, indépendante des catégories, gérée dans Produits -> Moments (case à cocher dans chaque produit, colonne dans la liste des produits). 3 termes avec description : Le midi, Le goûter, La soirée, avec au moins 2 produits chacun. Page dédiée pour chaque moment, comme la maquette : titre, phrase d'intro, boutons pour passer d'un moment à l'autre et grille des produits (catégorie, nom, prix, bouton "Choisir" ou "Ajouter"). Lien "Nos moments" ajouté au menu.
+- **Remarques :** commit XXXXXXX, thème en version 1.11.0. Nouveau template taxonomy-moment.php. Les boutons sont dans l'ordre de la journée grâce aux slugs (le-midi, le-gouter, la-soiree). Lien du menu en adresse complète pour le search-replace. IT 12 faite après l'IT 13.
