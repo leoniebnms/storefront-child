@@ -1726,3 +1726,68 @@ function watsons_lignes_frais( $commande ) {
 
 	return $lignes;
 }
+
+/**
+ * US-16.1 / US-16.2 : section "Nouveautes" sur la page d'accueil, avec les 3 derniers produits ajoutés au catalogue.
+ * Code court [watsons_nouveautes] : à mettre dans le contenu de la page d'accueil, avant [watsons_carte].
+ */
+function watsons_nouveautes() {
+	// Les 3 derniers produits publiés et visibles dans la boutique, du plus récent au plus ancien.
+	$produits = wc_get_products(
+		array(
+			'status'     => 'publish',
+			'visibility' => 'catalog',
+			'limit'      => 3,
+			'orderby'    => 'date',
+			'order'      => 'DESC',
+		)
+	);
+
+	if ( ! $produits ) {
+		return '';
+	}
+
+	ob_start();
+	?>
+	<section class="nouveautes">
+		<?php /* Titre sans accent : la police Tall Dark n'en a pas */ ?>
+		<h2 class="nouveautes__titre">Nouveautes</h2>
+		<p class="nouveautes__intro">Les derniers arrivés à la carte du Watson's Pub.</p>
+
+		<ul class="nouveautes__grille">
+			<?php foreach ( $produits as $produit ) : ?>
+				<?php
+				// La catégorie en petit au-dessus du nom (Burgers, Boissons...).
+				$categories = wc_get_product_terms( $produit->get_id(), 'product_cat', array( 'fields' => 'names' ) );
+				?>
+				<li class="produit-carte">
+					<a class="produit-carte__photo" href="<?php echo esc_url( $produit->get_permalink() ); ?>" tabindex="-1" aria-hidden="true">
+						<?php echo $produit->get_image( 'woocommerce_thumbnail', array( 'class' => 'produit-carte__image' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- image WooCommerce. ?>
+						<span class="nouveautes__badge">Nouveau</span>
+					</a>
+
+					<?php if ( $categories ) : ?>
+						<p class="produit-carte__categorie"><?php echo esc_html( $categories[0] ); ?></p>
+					<?php endif; ?>
+
+					<h3 class="produit-carte__nom"><a href="<?php echo esc_url( $produit->get_permalink() ); ?>"><?php echo esc_html( remove_accents( $produit->get_name() ) ); ?></a></h3>
+					<p class="produit-carte__prix">À partir de <?php echo wp_kses_post( wc_price( wc_get_price_to_display( $produit ) ) ); ?></p>
+
+					<?php /* Comme sur la carte de l'accueil : "Commander" mène à la fiche produit */ ?>
+					<a class="button produit-carte__bouton" href="<?php echo esc_url( $produit->get_permalink() ); ?>">
+						Commander<span class="screen-reader-text"> <?php echo esc_html( $produit->get_name() ); ?></span>
+					</a>
+				</li>
+			<?php endforeach; ?>
+		</ul>
+	</section>
+	<?php
+	return ob_get_clean();
+}
+
+add_shortcode(
+	'watsons_nouveautes',
+	function () {
+		return watsons_nouveautes();
+	}
+);

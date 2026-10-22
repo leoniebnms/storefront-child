@@ -3879,6 +3879,119 @@ html {
   color: var(--gris);
 }
 
+/* US-16.2 : section "Nouveautes" de la page d'accueil (3 derniers produits) */
+.nouveautes {
+  max-width: 56rem;
+  margin: 0 auto 5rem;
+  text-align: center;
+}
+
+.nouveautes__titre {
+  margin: 0;
+  font-family: var(--font-grand-titre);
+  font-weight: normal;
+  font-synthesis: none;
+  font-size: 3.5rem;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: uppercase;
+}
+
+.nouveautes__intro {
+  margin: 0.25rem 0 2.5rem;
+  font-size: 1rem;
+}
+
+/* Grille de 3 cartes : mêmes cartes que les pages "Nos moments" */
+.nouveautes__grille {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.nouveautes .produit-carte__photo {
+  position: relative;
+}
+
+/* Étiquette "Nouveau" en haut à gauche de la photo */
+.nouveautes__badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.25rem 0.63rem;
+  background: var(--rouille);
+  color: var(--blanc);
+  font-family: var(--font-titre);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.nouveautes .produit-carte__nom a {
+  color: var(--noir);
+  text-decoration: none;
+}
+
+.nouveautes .produit-carte__nom a:hover {
+  color: var(--rouille);
+}
+
+/* Bouton "Commander" rouille, comme sur la carte de l'accueil */
+.nouveautes .produit-carte__bouton {
+  display: block;
+  padding: 0.75rem 1rem;
+  background: var(--rouille);
+  color: var(--blanc);
+  font-size: 0.88rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.nouveautes .produit-carte__bouton:hover,
+.nouveautes .produit-carte__bouton:focus {
+  background: var(--noir);
+  color: var(--blanc);
+}
+
+/* Mobile : 2 colonnes, comme les pages "Nos moments" */
+@media (max-width: 47.94rem) {
+  .nouveautes {
+    margin-bottom: 3rem;
+  }
+
+  .nouveautes__titre {
+    font-size: 2.5rem;
+  }
+
+  .nouveautes__intro {
+    margin-bottom: 1.5rem;
+    font-size: 1.13rem;
+  }
+
+  .nouveautes__grille {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem 1.25rem;
+  }
+
+  .nouveautes .produit-carte__prix {
+    margin-bottom: 0.63rem;
+  }
+
+  /* Bouton à la taille du texte */
+  .nouveautes .produit-carte__bouton {
+    display: inline-block;
+    padding: 0.63rem 1.25rem;
+    font-size: 0.94rem;
+  }
+
+  .nouveautes__badge {
+    display: none;
+  }
+}
+
 /* DEBUT E-MAILS
  * US-8.2 / US-8.4 : style des e-mails du Watson's Pub.
  * Cette partie ne change rien sur le site : functions.php la lit et la donne à WooCommerce pour les e-mails.
