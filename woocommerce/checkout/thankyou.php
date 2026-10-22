@@ -2,6 +2,7 @@
 /**
  * US-6.2 : page Confirmation comme la maquette.
  * US-10.3 : ligne du code promo dans le récapitulatif.
+ * US-15 : ligne des frais de préparation.
  *
  * @package WooCommerce\Templates
  * @version 8.1.0
@@ -80,6 +81,14 @@ $minutes_preparation = 20;
 						<li class="merci-recap__ligne merci-recap__ligne--promo">
 							<span class="merci-recap__produit">Code <?php echo esc_html( strtoupper( $code_promo ) ); ?></span>
 							<span class="merci-recap__prix">−<?php echo wp_kses_post( wc_price( (float) $order->get_discount_total() + (float) $order->get_discount_tax() ) ); ?></span>
+						</li>
+					<?php endforeach; ?>
+
+					<?php /* US-15 : frais de préparation */ ?>
+					<?php foreach ( watsons_lignes_frais( $order ) as $ligne_frais ) : ?>
+						<li class="merci-recap__ligne merci-recap__ligne--promo">
+							<span class="merci-recap__produit"><?php echo esc_html( $ligne_frais['nom'] ); ?></span>
+							<span class="merci-recap__prix"><?php echo wp_kses_post( $ligne_frais['montant'] ); ?></span>
 						</li>
 					<?php endforeach; ?>
 				</ul>

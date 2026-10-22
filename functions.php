@@ -1037,6 +1037,15 @@ function watsons_mail_recapitulatif( $commande ) {
 		);
 	}
 
+	// US-15 : frais de préparation.
+	foreach ( watsons_lignes_frais( $commande ) as $ligne_frais ) {
+		$lignes .= sprintf(
+			'<tr class="mail-recap__info"><td>%1$s</td><td class="mail-recap__prix">%2$s</td></tr>',
+			esc_html( $ligne_frais['nom'] ),
+			$ligne_frais['montant']
+		);
+	}
+
 	// Réception : "Retrait en boutique – Gratuit" ou "Livraison à domicile – 6,90 €".
 	if ( $commande->get_shipping_method() ) {
 		$frais   = (float) $commande->get_shipping_total() + (float) $commande->get_shipping_tax();
@@ -1608,3 +1617,112 @@ function watsons_un_avis( $commentaire ) {
 add_action( 'init', function () {
 	remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10 );
 } );
+
+/** US-15 : frais de préparation si le panier est inférieur à un seuil */
+
+// US-15.1 : montant et seuil réglables dans WooCommerce > Réglages > Général (en bas de la page).
+add_filter( 'woocommerce_general_settings', function ( $reglages ) {
+	$reglages[] = array(
+		'title' => 'Frais de préparation',
+		'type'  => 'title',
+		'desc'  => 'Ajoutés automatiquement au panier quand le montant des produits (après code promo) est inférieur au seuil. Mettre 0 dans le montant pour ne plus les appliquer.',
+		'id'    => 'watsons_frais',
+	);
+
+	$reglages[] = array(
+		'title'             => 'Montant des frais (€)',
+		'id'                => 'watsons_frais_montant',
+		'type'              => 'number',
+		'default'           => '1.50',
+		'css'               => 'width: 6rem;',
+		'custom_attributes' => array( 'step' => '0.01', 'min' => '0' ),
+	);
+
+	$reglages[] = array(
+		'title'             => 'Seuil (€)',
+		'id'                => 'watsons_frais_seuil',
+		'type'              => 'number',
+		'default'           => '15',
+		'css'               => 'width: 6rem;',
+		'custom_attributes' => array( 'step' => '0.01', 'min' => '0' ),
+		'desc_tip'          => 'À partir de ce montant, les frais sont offerts.',
+	);
+
+	$reglages[] = array(
+		'type' => 'sectionend',
+		'id'   => 'watsons_frais',
+	);
+
+	return $reglages;
+} );
+
+// Les réglages et le montant des produits du panier (TTC, après code promo).
+function watsons_frais_reglages() {
+	return array(
+		'montant' => max( 0, (float) get_option( 'watsons_frais_montant', 1.5 ) ),
+		'seuil'   => max( 0, (float) get_option( 'watsons_frais_seuil', 15 ) ),
+	);
+}
+
+function watsons_montant_produits() {
+	return WC()->cart ? (float) WC()->cart->get_cart_contents_total() + (float) WC()->cart->get_cart_contents_tax() : 0;
+}
+
+// US-15.2 : WooCommerce recalcule le panier à chaque changement : on ajoute (ou non) les frais à ce moment-là.
+add_action( 'woocommerce_cart_calculate_fees', function ( $panier ) {
+	if ( is_admin() && ! wp_doing_ajax() ) {
+		return;
+	}
+
+	$reglages = watsons_frais_reglages();
+
+	if ( $reglages['montant'] > 0 && ! $panier->is_empty() && watsons_montant_produits() < $reglages['seuil'] ) {
+		$panier->add_fee( 'Frais de préparation', $reglages['montant'], false );
+	}
+} );
+
+// US-15.3 : le message au-dessus du total ("Plus que 8,00 €…" ou "Frais de préparation offerts !").
+function watsons_message_frais() {
+	$reglages = watsons_frais_reglages();
+
+	if ( $reglages['montant'] <= 0 || WC()->cart->is_empty() ) {
+		return;
+	}
+
+	$montant = watsons_montant_produits();
+	$reste   = $reglages['seuil'] - $montant;
+
+	if ( $reste > 0 ) {
+		$pourcentage = $reglages['seuil'] > 0 ? round( $montant / $reglages['seuil'] * 100 ) : 0;
+		?>
+		<div class="panier-frais">
+			<span class="panier-frais__icone" aria-hidden="true">!</span>
+			<div class="panier-frais__texte">
+				Plus que <strong class="panier-frais__montant"><?php echo wp_kses_post( wc_price( $reste ) ); ?></strong> pour ne pas payer les frais de préparation.
+				<span class="panier-frais__barre" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?php echo esc_attr( $pourcentage ); ?>"><span class="panier-frais__progression" style="width: <?php echo esc_attr( $pourcentage ); ?>%;"></span></span>
+			</div>
+		</div>
+		<?php
+	} else {
+		?>
+		<div class="panier-frais panier-frais--offerts">
+			<span class="panier-frais__icone" aria-hidden="true">✓</span>
+			<p class="panier-frais__texte"><strong class="panier-frais__montant">Frais de préparation offerts !</strong> Votre commande dépasse <?php echo wp_kses_post( wc_price( $reglages['seuil'] ) ); ?>.</p>
+		</div>
+		<?php
+	}
+}
+
+// Les frais dans les récapitulatifs (confirmation, mails, Mon compte) : "Frais de préparation 1,50 €".
+function watsons_lignes_frais( $commande ) {
+	$lignes = array();
+
+	foreach ( $commande->get_fees() as $frais ) {
+		$lignes[] = array(
+			'nom'     => $frais->get_name(),
+			'montant' => wc_price( (float) $frais->get_total() + (float) $frais->get_total_tax(), array( 'currency' => $commande->get_currency() ) ),
+		);
+	}
+
+	return $lignes;
+}

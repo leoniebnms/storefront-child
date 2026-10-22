@@ -3805,6 +3805,80 @@ html {
   }
 }
 
+/* US-15.3 : message "frais de préparation" dans le panier */
+.panier-frais {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+  padding: 0.88rem 1rem;
+  border: 0.06rem solid var(--rouille);
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.panier-frais__icone {
+  flex: 0 0 1.38rem;
+  height: 1.38rem;
+  border-radius: 50%;
+  background: var(--rouille);
+  color: var(--blanc);
+  font-size: 0.81rem;
+  font-weight: 700;
+  line-height: 1.38rem;
+  text-align: center;
+}
+
+.panier-frais__texte {
+  flex: 1;
+  margin: 0;
+}
+
+.panier-frais__montant,
+.panier-frais__montant .amount {
+  font-weight: 400;
+  color: var(--rouille);
+}
+
+/* Barre de progression jusqu'au seuil */
+.panier-frais__barre {
+  display: block;
+  max-width: 20rem;
+  height: 0.38rem;
+  margin-top: 0.5rem;
+  background: var(--gris-entete);
+}
+
+.panier-frais__progression {
+  display: block;
+  height: 100%;
+  background: var(--rouille);
+}
+
+/* Frais offerts : vert */
+.panier-frais--offerts {
+  border-color: var(--vert);
+}
+
+.panier-frais--offerts .panier-frais__icone {
+  background: var(--vert);
+}
+
+.panier-frais--offerts .panier-frais__montant {
+  color: var(--vert);
+}
+
+/* Ligne "Frais de préparation" dans le total */
+.panier-remises__ligne--frais {
+  color: var(--rouille);
+}
+
+.panier-remises__aide {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--gris);
+}
+
 /* DEBUT E-MAILS
  * US-8.2 / US-8.4 : style des e-mails du Watson's Pub.
  * Cette partie ne change rien sur le site : functions.php la lit et la donne à WooCommerce pour les e-mails.

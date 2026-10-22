@@ -2,6 +2,7 @@
 /**
  * US-5.3 : bas de la page Panier, comme sur la maquette avec un bloc "Réception" : choix du mode de réception et un bloc "Total (TTC)" avec un bouton "Valider le panier".
  * US-10.3 : bloc "Code promo" au-dessus de la réception, et la réduction au-dessus du total.
+ * US-15.3 : message et ligne "Frais de préparation" (mis à jour tout seuls avec le panier).
  *
  * @package WooCommerce\Templates
  * @version 2.3.6
@@ -132,8 +133,12 @@ $erreur = $message && 'error' === $message['type'];
 		</section>
 	<?php endif; ?>
 
-	<?php /* US-10.3 : sous-total et réduction, au-dessus du total */ ?>
-	<?php if ( $codes ) : ?>
+	<?php /* US-15.3 : "Plus que 8,00 €…" ou "Frais de préparation offerts !" (fonction dans functions.php) */ ?>
+	<?php watsons_message_frais(); ?>
+
+	<?php /* US-10.3 / US-15.3 : sous-total, réduction et frais, au-dessus du total */ ?>
+	<?php $frais = WC()->cart->get_fees(); ?>
+	<?php if ( $codes || $frais ) : ?>
 		<ul class="panier-remises">
 			<li class="panier-remises__ligne">
 				<span>Sous-total</span>
@@ -143,6 +148,15 @@ $erreur = $message && 'error' === $message['type'];
 				<li class="panier-remises__ligne panier-remises__ligne--promo">
 					<span>Code <?php echo esc_html( strtoupper( $code ) ); ?></span>
 					<span>−<?php echo wp_kses_post( wc_price( WC()->cart->get_coupon_discount_amount( $code, WC()->cart->display_cart_ex_tax ) ) ); ?></span>
+				</li>
+			<?php endforeach; ?>
+			<?php foreach ( $frais as $ligne_frais ) : ?>
+				<li class="panier-remises__ligne panier-remises__ligne--frais">
+					<span>
+						<?php echo esc_html( $ligne_frais->name ); ?>
+						<small class="panier-remises__aide">Offerts dès <?php echo wp_kses_post( wc_price( watsons_frais_reglages()['seuil'] ) ); ?> d'achat</small>
+					</span>
+					<span><?php echo wp_kses_post( wc_price( (float) $ligne_frais->total + (float) $ligne_frais->tax ) ); ?></span>
 				</li>
 			<?php endforeach; ?>
 		</ul>

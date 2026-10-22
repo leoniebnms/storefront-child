@@ -2,6 +2,7 @@
 /**
  * US-9.3 : détail d'une commande (bouton "Voir" dans Mes commandes), comme la maquette.
  * US-10.3 : ligne du code promo dans le récapitulatif.
+ * US-15 : ligne des frais de préparation.
  *
  * @package WooCommerce\Templates
  * @version 3.0.0
@@ -83,6 +84,14 @@ $annulee = isset( $_GET['annulee'] ) && $commande->has_status( 'cancelled' );
 				<li class="commande-detail__ligne commande-detail__ligne--promo">
 					<span>Code <?php echo esc_html( strtoupper( $code_promo ) ); ?></span>
 					<span>−<?php echo wp_kses_post( wc_price( (float) $commande->get_discount_total() + (float) $commande->get_discount_tax(), $devise ) ); ?></span>
+				</li>
+			<?php endforeach; ?>
+
+			<?php /* US-15 : frais de préparation */ ?>
+			<?php foreach ( watsons_lignes_frais( $commande ) as $ligne_frais ) : ?>
+				<li class="commande-detail__ligne commande-detail__ligne--promo">
+					<span><?php echo esc_html( $ligne_frais['nom'] ); ?></span>
+					<span><?php echo wp_kses_post( $ligne_frais['montant'] ); ?></span>
 				</li>
 			<?php endforeach; ?>
 
