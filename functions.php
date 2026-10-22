@@ -1434,3 +1434,77 @@ function watsons_photo_membre( $id = null ) {
 		echo get_the_post_thumbnail( $id, 'medium_large', array( 'class' => 'membre-photo', 'alt' => get_the_title( $id ) ) );
 	}
 }
+
+/** US-13 : ventes croisées "Ils se completent", sur la fiche produit et dans le panier */
+
+/**
+ * Le bloc "Ils se completent" : jusqu'à 3 produits, avec photo, nom, prix et bouton "Ajouter".
+ * Les produits sont ceux choisis dans l'admin : Produit > Produits liés > Ventes croisées.
+ */
+function watsons_bloc_suggestions( $ids, $phrase ) {
+	$produits = array();
+
+	foreach ( array_slice( array_unique( array_map( 'absint', (array) $ids ) ), 0, 6 ) as $id ) {
+		$produit = wc_get_product( $id );
+
+		// Seulement les produits publiés et disponibles.
+		if ( $produit && 'publish' === $produit->get_status() && $produit->is_in_stock() && $produit->is_purchasable() ) {
+			$produits[] = $produit;
+		}
+
+		if ( 3 === count( $produits ) ) {
+			break;
+		}
+	}
+
+	if ( ! $produits ) {
+		return;
+	}
+	?>
+	<section class="suggestions">
+		<h2 class="suggestions__titre">Ils se completent</h2>
+		<p class="suggestions__phrase"><?php echo esc_html( $phrase ); ?></p>
+
+		<ul class="suggestions__liste">
+			<?php foreach ( $produits as $produit ) : ?>
+				<?php
+				// Produit simple : ajouté directement au panier. Produit à options : on va sur sa fiche pour choisir.
+				$simple = $produit->is_type( 'simple' );
+				$lien   = $simple ? $produit->add_to_cart_url() : $produit->get_permalink();
+				?>
+				<li class="suggestion">
+					<a class="suggestion__photo" href="<?php echo esc_url( $produit->get_permalink() ); ?>" tabindex="-1" aria-hidden="true">
+						<?php echo $produit->get_image( 'woocommerce_thumbnail', array( 'class' => 'suggestion__image' ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- image WooCommerce. ?>
+					</a>
+					<div class="suggestion__texte">
+						<a class="suggestion__nom" href="<?php echo esc_url( $produit->get_permalink() ); ?>"><?php echo esc_html( $produit->get_name() ); ?></a>
+						<span class="suggestion__prix"><?php echo wp_kses_post( $produit->get_price_html() ); ?></span>
+						<a class="suggestion__bouton" href="<?php echo esc_url( $lien ); ?>" rel="nofollow">
+							<?php echo $simple ? 'Ajouter' : 'Choisir'; ?><span class="screen-reader-text"> <?php echo esc_html( $produit->get_name() ); ?></span>
+						</a>
+					</div>
+				</li>
+			<?php endforeach; ?>
+		</ul>
+	</section>
+	<?php
+}
+
+// Fiche produit : sous le produit, les ventes croisées de ce produit.
+add_action( 'woocommerce_after_single_product', function () {
+	global $product;
+
+	if ( $product instanceof WC_Product ) {
+		watsons_bloc_suggestions( $product->get_cross_sell_ids(), 'Complétez votre burger avec une boisson ou un dessert.' );
+	}
+}, 20 );
+
+// Panier : on remplace les ventes croisées de WooCommerce par notre bloc, sous le total.
+add_action( 'init', function () {
+	remove_action( 'woocommerce_cart_collaterals', 'woocommerce_cross_sell_display' );
+} );
+
+add_action( 'woocommerce_after_cart', function () {
+	// Les ventes croisées de tous les produits du panier, sans ceux qui y sont déjà.
+	watsons_bloc_suggestions( WC()->cart->get_cross_sells(), 'Complétez votre commande avec une boisson ou un dessert.' );
+} );

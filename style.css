@@ -3280,6 +3280,145 @@ html {
   }
 }
 
+/* US-13.2 : bloc "Ils se completent" (fiche produit et panier) */
+.suggestions {
+  clear: both;
+  max-width: 56rem;
+  margin: 3.75rem auto 0;
+  padding-top: 2.5rem;
+  border-top: 0.13rem dotted var(--noir);
+}
+
+.suggestions__titre {
+  margin: 0;
+  font-family: var(--font-grand-titre);
+  font-weight: normal;
+  font-synthesis: none;
+  font-size: 3rem;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: uppercase;
+}
+
+.suggestions__phrase {
+  margin: 0.5rem 0 1.5rem;
+  font-size: 1rem;
+}
+
+/* 3 cartes côte à côte */
+.suggestions__liste {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.suggestion {
+  padding: 0.75rem;
+  border: 0.06rem solid var(--gris);
+}
+
+.suggestion__photo {
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--gris-entete);
+}
+
+.suggestion .suggestion__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  object-fit: cover;
+}
+
+.suggestion__texte {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  margin-top: 0.75rem;
+}
+
+.suggestions .suggestion__nom {
+  font-family: var(--font-titre);
+  font-size: 1.13rem;
+  text-transform: uppercase;
+  color: var(--noir);
+  text-decoration: none;
+}
+
+.suggestions .suggestion__nom:hover {
+  color: var(--rouille);
+}
+
+.suggestion__prix,
+.suggestion__prix .amount {
+  font-size: 0.94rem;
+  color: var(--rouille);
+}
+
+.suggestions .suggestion__bouton {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  background: var(--rouille);
+  color: var(--blanc);
+  font-size: 0.81rem;
+  text-decoration: none;
+}
+
+.suggestions .suggestion__bouton:hover,
+.suggestions .suggestion__bouton:focus {
+  background: var(--noir);
+  color: var(--blanc);
+}
+
+/* Mobile : une carte par ligne, photo à gauche */
+@media (max-width: 47.94rem) {
+  .suggestions {
+    margin-top: 2.5rem;
+    padding-top: 1.75rem;
+  }
+
+  .suggestions__titre {
+    font-size: 2rem;
+  }
+
+  .suggestions__phrase {
+    font-size: 0.94rem;
+  }
+
+  .suggestions__liste {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .suggestion {
+    display: grid;
+    grid-template-columns: 5rem 1fr;
+    gap: 0.88rem;
+    align-items: center;
+  }
+
+  .suggestion__photo {
+    aspect-ratio: 1 / 1;
+  }
+
+  .suggestion__texte {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    margin-top: 0;
+  }
+
+  .suggestions .suggestion__bouton {
+    grid-column: 1 / -1;
+    text-align: center;
+  }
+}
+
 /* DEBUT E-MAILS
  * US-8.2 / US-8.4 : style des e-mails du Watson's Pub.
  * Cette partie ne change rien sur le site : functions.php la lit et la donne à WooCommerce pour les e-mails.
