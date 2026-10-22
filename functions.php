@@ -1495,7 +1495,7 @@ add_action( 'woocommerce_after_single_product', function () {
 	global $product;
 
 	if ( $product instanceof WC_Product ) {
-		watsons_bloc_suggestions( $product->get_cross_sell_ids(), 'Complétez votre burger avec une boisson ou un dessert.' );
+		watsons_bloc_suggestions( $product->get_cross_sell_ids(), 'Complétez votre commande avec une boisson ou un dessert.');
 	}
 }, 20 );
 
@@ -1543,4 +1543,68 @@ add_action( 'pre_get_posts', function ( $requete ) {
 	if ( ! is_admin() && $requete->is_main_query() && $requete->is_tax( 'moment' ) ) {
 		$requete->set( 'posts_per_page', -1 );
 	}
+} );
+
+/** US-14 : avis clients sur la fiche produit (le contenu est dans woocommerce/single-product-reviews.php) */
+
+// Les onglets de la fiche produit sont retirés (IT 2) : on affiche donc les avis sous "Ils se completent".
+add_action( 'woocommerce_after_single_product', function () {
+	if ( comments_open() ) {
+		comments_template();
+	}
+}, 30 );
+
+// Les étoiles d'une note : pleines en rouille, vides en gris.
+function watsons_etoiles( $note ) {
+	$note    = max( 0, min( 5, (int) round( (float) $note ) ) );
+	$etoiles = '';
+
+	for ( $i = 1; $i <= 5; $i++ ) {
+		$etoiles .= '<span class="avis-etoiles__etoile' . ( $i > $note ? ' avis-etoiles__etoile--vide' : '' ) . '" aria-hidden="true">★</span>';
+	}
+
+	return sprintf( '<span class="avis-etoiles" role="img" aria-label="Noté %1$d sur 5">%2$s</span>', $note, $etoiles );
+}
+
+// Le nom de l'auteur comme sur la maquette : "Lucas M.".
+function watsons_nom_avis( $commentaire ) {
+	$prenom = $commentaire->user_id ? get_user_meta( $commentaire->user_id, 'first_name', true ) : '';
+	$nom    = $commentaire->user_id ? get_user_meta( $commentaire->user_id, 'last_name', true ) : '';
+
+	if ( $prenom ) {
+		return $prenom . ( $nom ? ' ' . mb_strtoupper( mb_substr( $nom, 0, 1 ) ) . '.' : '' );
+	}
+
+	return get_comment_author( $commentaire );
+}
+
+// Un avis de la liste (appelé par wp_list_comments dans single-product-reviews.php).
+function watsons_un_avis( $commentaire ) {
+	$note = (int) get_comment_meta( $commentaire->comment_ID, 'rating', true );
+	?>
+	<li <?php comment_class( 'avis-item', $commentaire ); ?> id="li-comment-<?php comment_ID(); ?>">
+		<div class="avis-item__entete">
+			<span class="avis-item__auteur"><?php echo esc_html( watsons_nom_avis( $commentaire ) ); ?></span>
+			<?php if ( wc_review_is_from_verified_owner( $commentaire->comment_ID ) ) : ?>
+				<span class="avis-item__verifie">✓ Achat vérifié</span>
+			<?php endif; ?>
+			<span class="avis-item__date"><?php echo esc_html( get_comment_date( 'd/m/Y', $commentaire ) ); ?></span>
+		</div>
+
+		<?php if ( $note ) : ?>
+			<?php echo watsons_etoiles( $note ); // phpcs:ignore WordPress.Security.EscapeOutput -- déjà échappé. ?>
+		<?php endif; ?>
+
+		<?php if ( '0' === $commentaire->comment_approved ) : ?>
+			<p class="avis-item__attente">Votre avis est en attente de validation.</p>
+		<?php endif; ?>
+
+		<div class="avis-item__texte"><?php comment_text( $commentaire ); ?></div>
+	<?php
+	// La balise </li> est fermée par WordPress.
+}
+
+// Pas d'étoiles violettes sous le titre : la note est dans la section "Avis clients".
+add_action( 'init', function () {
+	remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10 );
 } );

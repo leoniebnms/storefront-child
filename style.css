@@ -3574,6 +3574,237 @@ html {
   }
 }
 
+/* US-14.1 : avis clients sur la fiche produit */
+.avis {
+  clear: both;
+  max-width: 56rem;
+  margin: 3.75rem auto 0;
+  padding-top: 2.5rem;
+  border-top: 0.13rem dotted var(--noir);
+}
+
+.avis__titre,
+.avis-form__titre,
+.avis-info__titre {
+  margin: 0;
+  font-family: var(--font-grand-titre);
+  font-weight: normal;
+  font-synthesis: none;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: uppercase;
+}
+
+.avis__titre {
+  font-size: 3rem;
+}
+
+/* Note moyenne : 4,5/5 ★★★★★ 2 avis */
+.avis__resume {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.5rem 0 1.5rem;
+}
+
+.avis__moyenne {
+  font-family: var(--font-titre);
+  font-size: 1.5rem;
+}
+
+.avis__nombre {
+  font-size: 0.81rem;
+  color: var(--gris);
+}
+
+/* Étoiles : rouille, vides en gris */
+.avis-etoiles {
+  color: var(--rouille);
+  letter-spacing: 0.13rem;
+}
+
+.avis-etoiles__etoile--vide {
+  color: var(--gris-clair);
+}
+
+/* La liste à gauche, le formulaire à droite */
+.avis__colonnes {
+  display: grid;
+  grid-template-columns: 1fr 19rem;
+  gap: 3rem;
+  align-items: start;
+}
+
+.avis-liste {
+  margin: 0;
+  padding: 0;
+  border-top: 0.13rem dotted var(--noir);
+  list-style: none;
+}
+
+.avis-item {
+  margin: 0;
+  padding: 1rem 0;
+  border-bottom: 0.13rem dotted var(--noir);
+}
+
+.avis-item__entete {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.avis-item__auteur {
+  font-family: var(--font-titre);
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.avis-item__verifie {
+  font-size: 0.75rem;
+  color: var(--vert);
+}
+
+.avis-item__date {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--gris);
+}
+
+.avis-item__attente {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  color: var(--orange);
+}
+
+.avis-item__texte p {
+  margin: 0.38rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.avis__vide {
+  margin: 0;
+  font-size: 0.94rem;
+}
+
+/* Cadre "Donner mon avis" (et les messages) */
+.avis .avis-form,
+.avis-info {
+  margin: 0;
+  padding: 1.5rem;
+  border: 0.06rem solid var(--gris);
+  background: transparent;
+}
+
+.avis-form__titre,
+.avis-info__titre {
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+.avis-form .comment-form {
+  margin: 0;
+}
+
+.avis-form label {
+  display: block;
+  margin: 0 0 0.25rem;
+  font-size: 0.81rem;
+  font-weight: 400;
+  color: var(--gris);
+}
+
+.avis-form .required {
+  color: var(--rouille);
+  text-decoration: none;
+}
+
+/* Les 5 étoiles cliquables (créées par WooCommerce à la place de la liste) */
+.avis-form p.stars {
+  margin: 0;
+}
+
+.avis-form p.stars a {
+  font-size: 1.5rem;
+}
+
+/* Étoiles en rouille (WooCommerce les met en violet au survol et une fois choisies) */
+.avis .avis-form p.stars a,
+.avis .avis-form p.stars a::before,
+.avis .avis-form p.stars:hover a::before,
+.avis .avis-form p.stars.selected a::before {
+  color: var(--rouille) !important;
+}
+
+.avis-form textarea {
+  width: 100%;
+  padding: 0.63rem;
+  border: 0.06rem solid var(--gris-bordure);
+  border-radius: 0;
+  background: var(--blanc);
+  box-shadow: none;
+  font-size: 0.88rem;
+}
+
+/* Champ commentaire : contour rouille quand on écrit (au lieu du violet) */
+.avis .avis-form textarea:focus {
+  border-color: var(--rouille);
+  outline: 0.13rem solid var(--rouille);
+  outline-offset: 0;
+}
+
+.avis-form .form-submit {
+  margin: 0;
+}
+
+.avis-form .avis-form__bouton {
+  width: 100%;
+  padding: 0.88rem 1rem;
+  font-size: 0.94rem;
+}
+
+.avis-info__texte {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.avis-info__lien {
+  text-decoration: underline;
+}
+
+/* Après l'envoi : cadre vert */
+.avis-info--merci {
+  border-color: var(--vert);
+}
+
+.avis-info--merci .avis-info__titre {
+  color: var(--vert);
+}
+
+/* Mobile : le formulaire sous les avis */
+@media (max-width: 47.94rem) {
+  .avis {
+    margin-top: 2.5rem;
+    padding-top: 1.75rem;
+  }
+
+  .avis__titre {
+    font-size: 2rem;
+  }
+
+  .avis__colonnes {
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  .avis-form__titre,
+  .avis-info__titre {
+    font-size: 1.5rem;
+  }
+}
+
 /* DEBUT E-MAILS
  * US-8.2 / US-8.4 : style des e-mails du Watson's Pub.
  * Cette partie ne change rien sur le site : functions.php la lit et la donne à WooCommerce pour les e-mails.
