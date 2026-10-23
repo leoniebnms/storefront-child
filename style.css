@@ -4038,6 +4038,278 @@ html {
   color: var(--gris);
 }
 
+/* US-18.2 : recherche et filtres de la carte, dans une colonne à gauche */
+.carte--recherche {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  column-gap: 3rem;
+  align-items: start;
+}
+
+/* Avec la colonne de filtres, les catégories passent sur une seule colonne */
+.carte--recherche .carte-categories {
+  grid-template-columns: 1fr;
+}
+
+.carte-recherche__cadre {
+  padding: 1.25rem;
+  border: 0.06rem solid var(--gris);
+}
+
+/* Le bouton "Filtrer" pour déplier n'existe qu'en mobile */
+.carte-recherche__ouvrir {
+  display: none;
+}
+
+.carte-recherche__formulaire {
+  margin: 0;
+}
+
+.carte-recherche__bloc {
+  margin: 0 0 1.25rem;
+  padding: 0 0 1.25rem;
+  border: 0;
+  border-bottom: 0.13rem dotted var(--noir);
+}
+
+.carte-recherche__titre {
+  display: block;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  font-family: var(--font-titre);
+  font-weight: 400;
+  font-size: 0.94rem;
+  text-transform: uppercase;
+}
+
+/* Champ de recherche avec la loupe à droite */
+.carte-recherche__champ {
+  position: relative;
+}
+
+.carte-recherche .carte-recherche__saisie {
+  width: 100%;
+  padding: 0.63rem 2.25rem 0.63rem 0.75rem;
+  border: 0.06rem solid var(--noir);
+  border-radius: 0;
+  background: var(--blanc);
+  box-shadow: none;
+  font-size: 0.88rem;
+}
+
+.carte-recherche__loupe {
+  position: absolute;
+  top: 50%;
+  right: 0.75rem;
+  width: 1rem;
+  height: 1rem;
+  transform: translateY(-50%);
+  fill: none;
+  stroke: var(--noir);
+  stroke-width: 1.5;
+}
+
+/* Curseur du prix en rouille */
+.carte-recherche__curseur {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--rouille);
+}
+
+.carte-recherche__bornes {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.38rem 0 0;
+  font-size: 0.81rem;
+}
+
+/* Cases à cocher Simple / Double, avec le nombre de produits à droite */
+.carte-recherche__case {
+  display: flex;
+  align-items: center;
+  gap: 0.63rem;
+  margin: 0 0 0.5rem;
+  font-weight: 400;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.carte-recherche__case input {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--rouille);
+}
+
+.carte-recherche__nombre {
+  margin-left: auto;
+  color: var(--gris);
+  font-size: 0.81rem;
+}
+
+.carte-recherche .carte-recherche__bouton {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 0;
+  background: var(--rouille);
+  color: var(--blanc);
+  font-size: 0.88rem;
+}
+
+.carte-recherche .carte-recherche__bouton:hover {
+  background: var(--noir);
+}
+
+.carte-recherche .carte-recherche__reinitialiser {
+  display: block;
+  margin: 0.75rem auto 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--noir);
+  font-size: 0.81rem;
+  text-decoration: underline;
+}
+
+.carte-recherche .carte-recherche__reinitialiser:hover {
+  background: transparent;
+  color: var(--rouille);
+}
+
+/* Filtres actifs : étiquettes rouille avec une croix */
+.carte-recherche__resultat {
+  margin-top: 1rem;
+}
+
+.carte-recherche__puces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.carte-recherche .carte-recherche__puce {
+  margin: 0;
+  padding: 0.38rem 0.63rem;
+  border: 0.06rem solid var(--rouille);
+  background: var(--blanc);
+  color: var(--rouille);
+  font-family: var(--font-titre);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.carte-recherche .carte-recherche__puce:hover {
+  background: var(--rouille);
+  color: var(--blanc);
+}
+
+.carte-recherche__total {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+/* US-18.3 : aucun produit trouvé */
+.carte-vide {
+  padding: 2.5rem 1.25rem;
+  border: 0.06rem solid var(--gris);
+  text-align: center;
+}
+
+.carte-vide[hidden] {
+  display: none;
+}
+
+.carte-vide__titre {
+  margin: 0;
+  font-family: var(--font-grand-titre);
+  font-size: 2.5rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.carte-vide__texte {
+  margin: 0.5rem 0 1.25rem;
+  font-size: 0.94rem;
+}
+
+.carte-vide .carte-vide__bouton {
+  padding: 0.75rem 1.5rem;
+  background: var(--rouille);
+  color: var(--blanc);
+  font-size: 0.88rem;
+}
+
+/* Les produits et catégories masqués par les filtres */
+.carte-produit[hidden],
+.carte-categorie[hidden] {
+  display: none;
+}
+
+/* Mobile : la colonne de filtres passe au-dessus de la carte, repliée */
+@media (max-width: 47.94rem) {
+  .carte--recherche {
+    grid-template-columns: 1fr;
+  }
+
+  .carte-recherche {
+    order: 2;
+    margin-bottom: 1.5rem;
+  }
+
+  .carte__contenu {
+    display: contents;
+  }
+
+  .carte--recherche .carte__titre {
+    order: 1;
+  }
+
+  .carte--recherche .carte-filtres {
+    order: 3;
+  }
+
+  .carte--recherche .carte-categories,
+  .carte--recherche .carte-vide {
+    order: 4;
+  }
+
+  .carte-recherche__cadre {
+    padding: 0;
+    border: 0;
+  }
+
+  .carte-recherche__cadre[open] {
+    padding: 1.25rem;
+    border: 0.06rem solid var(--gris);
+  }
+
+  .carte-recherche__ouvrir {
+    display: block;
+    padding: 0.75rem 1rem;
+    border: 0.06rem solid var(--noir);
+    font-family: var(--font-titre);
+    font-size: 0.88rem;
+    text-transform: uppercase;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .carte-recherche__ouvrir::-webkit-details-marker {
+    display: none;
+  }
+
+  .carte-recherche__cadre[open] .carte-recherche__ouvrir {
+    margin-bottom: 1.25rem;
+    border: 0;
+    padding: 0;
+  }
+}
+
 /* DEBUT E-MAILS
  * US-8.2 / US-8.4 : style des e-mails du Watson's Pub.
  * Cette partie ne change rien sur le site : functions.php la lit et la donne à WooCommerce pour les e-mails.

@@ -136,6 +136,7 @@ function watsons_footer_bas() {
 
 /**
  * US-2.3 : Afficher la carte du Watson's Pub.
+ * US-18 : recherche et filtres (mot, prix, taille) dans une colonne à gauche de la carte.
  */
 function watsons_carte( $args = array() ) {
 	$args = wp_parse_args(
@@ -170,106 +171,330 @@ function watsons_carte( $args = array() ) {
 		}
 	);
 
+	// Les produits de chaque catégorie, et pour les filtres : prix le plus bas, prix le plus haut, tailles.
+	$produits_par_categorie = array();
+	$prix_min               = null;
+	$prix_max               = 0;
+	$tailles                = array(); // "Simple" => nombre de produits.
+
+	foreach ( $categories as $categorie ) {
+		$produits_par_categorie[ $categorie->slug ] = wc_get_products(
+			array(
+				'category' => array( $categorie->slug ),
+				'status'   => 'publish',
+				'limit'    => -1,
+				'orderby'  => 'menu_order',
+				'order'    => 'ASC',
+			)
+		);
+
+		foreach ( $produits_par_categorie[ $categorie->slug ] as $produit ) {
+			$prix     = (float) wc_get_price_to_display( $produit );
+			$prix_min = null === $prix_min ? $prix : min( $prix_min, $prix );
+			$prix_max = max( $prix_max, $prix );
+
+			foreach ( watsons_tailles_produit( $produit ) as $taille ) {
+				$tailles[ $taille ] = isset( $tailles[ $taille ] ) ? $tailles[ $taille ] + 1 : 1;
+			}
+		}
+	}
+
+	$prix_min = (int) floor( (float) $prix_min );
+	$prix_max = (int) ceil( $prix_max );
+
 	ob_start();
 	?>
-	<section id="carte" class="carte">
+	<section id="carte" class="carte carte--recherche">
 
-		<<?php echo $balise_titre; ?> class="carte__titre">La carte</<?php echo $balise_titre; ?>>
+		<?php /* US-18.2 : colonne de gauche, recherche et filtres (dépliable en mobile) */ ?>
+		<div class="carte-recherche">
+			<details class="carte-recherche__cadre" open>
+				<summary class="carte-recherche__ouvrir">Filtrer</summary>
 
-		<?php /* Les filtres : des boutons qui affichent ou masquent les catégories */ ?>
-		<div class="carte-filtres" role="group" aria-label="Filtrer la carte">
-			<button type="button" class="carte-filtres__lien<?php echo $active ? '' : ' carte-filtres__lien--actif'; ?>"
-				data-filtre="tout" aria-pressed="<?php echo $active ? 'false' : 'true'; ?>">Tout</button>
+				<form class="carte-recherche__formulaire" role="search" aria-label="Rechercher dans la carte">
+					<div class="carte-recherche__bloc">
+						<label class="carte-recherche__titre" for="carte-mot">Rechercher</label>
+						<div class="carte-recherche__champ">
+							<input class="carte-recherche__saisie" type="search" id="carte-mot" name="mot" placeholder="Burger, crêpe...">
+							<svg class="carte-recherche__loupe" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5"/><path d="m11 11 4 4"/></svg>
+						</div>
+					</div>
 
-			<?php foreach ( $categories as $categorie ) : ?>
-				<?php $est_active = ( $active === $categorie->slug ); ?>
-				<button type="button" class="carte-filtres__lien<?php echo $est_active ? ' carte-filtres__lien--actif' : ''; ?>"
-					data-filtre="<?php echo esc_attr( $categorie->slug ); ?>"
-					aria-pressed="<?php echo $est_active ? 'true' : 'false'; ?>">
-					<?php echo esc_html( $categorie->name ); ?>
-				</button>
-			<?php endforeach; ?>
+					<?php /* US-18.1 : prix maximum */ ?>
+					<div class="carte-recherche__bloc">
+						<label class="carte-recherche__titre" for="carte-prix">Prix</label>
+						<input class="carte-recherche__curseur" type="range" id="carte-prix" name="prix"
+							min="<?php echo esc_attr( $prix_min ); ?>" max="<?php echo esc_attr( $prix_max ); ?>" step="1" value="<?php echo esc_attr( $prix_max ); ?>">
+						<p class="carte-recherche__bornes">
+							<span><?php echo esc_html( $prix_min ); ?> €</span>
+							<span class="carte-recherche__prix-max"><?php echo esc_html( $prix_max ); ?> €</span>
+						</p>
+					</div>
+
+					<?php /* US-18.1 : taille (attribut "Taille" des produits variables) */ ?>
+					<?php if ( $tailles ) : ?>
+						<fieldset class="carte-recherche__bloc">
+							<legend class="carte-recherche__titre">Taille</legend>
+							<?php foreach ( $tailles as $taille => $nombre ) : ?>
+								<label class="carte-recherche__case">
+									<input type="checkbox" name="taille" value="<?php echo esc_attr( sanitize_title( $taille ) ); ?>" data-nom="<?php echo esc_attr( $taille ); ?>">
+									<?php echo esc_html( $taille ); ?>
+									<span class="carte-recherche__nombre"><?php echo esc_html( $nombre ); ?></span>
+								</label>
+							<?php endforeach; ?>
+						</fieldset>
+					<?php endif; ?>
+
+					<button type="submit" class="carte-recherche__bouton">Filtrer</button>
+					<button type="reset" class="carte-recherche__reinitialiser">Réinitialiser les filtres</button>
+				</form>
+			</details>
+
+			<?php /* Filtres actifs (avec une croix pour les retirer) et nombre de produits trouvés */ ?>
+			<div class="carte-recherche__resultat" aria-live="polite">
+				<ul class="carte-recherche__puces"></ul>
+				<p class="carte-recherche__total"></p>
+			</div>
 		</div>
 
-		<?php /* Une section par catégorie, avec ses produits */ ?>
-		<div class="carte-categories">
-			<?php foreach ( $categories as $categorie ) : ?>
-				<?php
-				$produits = wc_get_products(
-					array(
-						'category' => array( $categorie->slug ),
-						'status'   => 'publish',
-						'limit'    => -1,
-						'orderby'  => 'menu_order',
-						'order'    => 'ASC',
-					)
-				);
+		<div class="carte__contenu">
+			<<?php echo $balise_titre; ?> class="carte__titre">La carte</<?php echo $balise_titre; ?>>
 
-				if ( empty( $produits ) ) {
-					continue;
-				}
+			<?php /* Les filtres : des boutons qui affichent ou masquent les catégories */ ?>
+			<div class="carte-filtres" role="group" aria-label="Filtrer la carte">
+				<button type="button" class="carte-filtres__lien<?php echo $active ? '' : ' carte-filtres__lien--actif'; ?>"
+					data-filtre="tout" aria-pressed="<?php echo $active ? 'false' : 'true'; ?>">Tout</button>
 
-				$cachee = ( $active && $active !== $categorie->slug );
-				?>
+				<?php foreach ( $categories as $categorie ) : ?>
+					<?php $est_active = ( $active === $categorie->slug ); ?>
+					<button type="button" class="carte-filtres__lien<?php echo $est_active ? ' carte-filtres__lien--actif' : ''; ?>"
+						data-filtre="<?php echo esc_attr( $categorie->slug ); ?>"
+						aria-pressed="<?php echo $est_active ? 'true' : 'false'; ?>">
+						<?php echo esc_html( $categorie->name ); ?>
+					</button>
+				<?php endforeach; ?>
+			</div>
 
-				<div class="carte-categorie carte-categorie--<?php echo esc_attr( $categorie->slug ); ?>"
-					data-categorie="<?php echo esc_attr( $categorie->slug ); ?>"<?php echo $cachee ? ' hidden' : ''; ?>>
+			<?php /* Une section par catégorie, avec ses produits */ ?>
+			<div class="carte-categories">
+				<?php foreach ( $categories as $categorie ) : ?>
+					<?php
+					$produits = $produits_par_categorie[ $categorie->slug ];
 
-					<h3 class="carte-categorie__titre"><?php echo esc_html( $categorie->name ); ?></h3>
+					if ( empty( $produits ) ) {
+						continue;
+					}
 
-					<?php foreach ( $produits as $produit ) : ?>
-						<article class="carte-produit">
-							<h4 class="carte-produit__nom">
-								<a href="<?php echo esc_url( $produit->get_permalink() ); ?>">
-									<?php echo esc_html( $produit->get_name() ); ?>
+					$cachee = ( $active && $active !== $categorie->slug );
+					?>
+
+					<div class="carte-categorie carte-categorie--<?php echo esc_attr( $categorie->slug ); ?>"
+						data-categorie="<?php echo esc_attr( $categorie->slug ); ?>" data-nom="<?php echo esc_attr( $categorie->name ); ?>"<?php echo $cachee ? ' hidden' : ''; ?>>
+
+						<h3 class="carte-categorie__titre"><?php echo esc_html( $categorie->name ); ?></h3>
+
+						<?php foreach ( $produits as $produit ) : ?>
+							<?php /* Les infos utilisées par la recherche : texte sans accents, prix de départ, tailles */ ?>
+							<article class="carte-produit"
+								data-texte="<?php echo esc_attr( strtolower( remove_accents( $produit->get_name() . ' ' . wp_strip_all_tags( $produit->get_short_description() ) ) ) ); ?>"
+								data-prix="<?php echo esc_attr( wc_get_price_to_display( $produit ) ); ?>"
+								data-tailles="<?php echo esc_attr( implode( ' ', array_map( 'sanitize_title', watsons_tailles_produit( $produit ) ) ) ); ?>">
+								<h4 class="carte-produit__nom">
+									<a href="<?php echo esc_url( $produit->get_permalink() ); ?>">
+										<?php echo esc_html( $produit->get_name() ); ?>
+									</a>
+								</h4>
+
+								<?php if ( $produit->get_short_description() ) : ?>
+									<div class="carte-produit__desc">
+										<?php echo wp_kses_post( $produit->get_short_description() ); ?>
+									</div>
+								<?php endif; ?>
+
+								<span class="carte-produit__prix"><?php echo wp_kses_post( $produit->get_price_html() ); ?></span>
+
+								<a class="button carte-produit__bouton" href="<?php echo esc_url( $produit->get_permalink() ); ?>">
+									Commander
 								</a>
-							</h4>
+							</article>
+						<?php endforeach; ?>
+					</div>
 
-							<?php if ( $produit->get_short_description() ) : ?>
-								<div class="carte-produit__desc">
-									<?php echo wp_kses_post( $produit->get_short_description() ); ?>
-								</div>
-							<?php endif; ?>
+				<?php endforeach; ?>
+			</div>
 
-							<span class="carte-produit__prix"><?php echo wp_kses_post( $produit->get_price_html() ); ?></span>
-
-							<a class="button carte-produit__bouton" href="<?php echo esc_url( $produit->get_permalink() ); ?>">
-								Commander
-							</a>
-						</article>
-					<?php endforeach; ?>
-				</div>
-
-			<?php endforeach; ?>
+			<?php /* US-18.3 : aucun produit ne correspond */ ?>
+			<div class="carte-vide" hidden>
+				<p class="carte-vide__titre">Aucun produit</p>
+				<p class="carte-vide__texte">Essayez un autre mot ou retirez des filtres.</p>
+				<button type="button" class="carte-vide__bouton">Voir toute la carte</button>
+			</div>
 		</div>
 
 	</section>
 
 	<script>
-	/* Filtres de la carte : on masque les catégories qui ne correspondent pas au bouton cliqué. */
+	/* Filtres de la carte : catégorie (boutons), mot, prix et taille (colonne de gauche). */
 	( function () {
 		var carte = document.currentScript.previousElementSibling;
 		var boutons = carte.querySelectorAll( '[data-filtre]' );
 		var sections = carte.querySelectorAll( '[data-categorie]' );
+		var produits = carte.querySelectorAll( '.carte-produit' );
+		var formulaire = carte.querySelector( '.carte-recherche__formulaire' );
+		var cadre = carte.querySelector( '.carte-recherche__cadre' );
+		var curseur = formulaire.prix;
+		var prixMax = carte.querySelector( '.carte-recherche__prix-max' );
+		var puces = carte.querySelector( '.carte-recherche__puces' );
+		var total = carte.querySelector( '.carte-recherche__total' );
+		var vide = carte.querySelector( '.carte-vide' );
+		var categorie = carte.querySelector( '.carte-filtres__lien--actif' ).dataset.filtre;
+
+		// Mobile : la colonne de filtres est repliée au départ.
+		if ( window.matchMedia( '(max-width: 47.94rem)' ).matches ) {
+			cadre.open = false;
+		}
+
+		function sansAccents( texte ) {
+			return texte.toLowerCase().normalize( 'NFD' ).replace( /[̀-ͯ]/g, '' ).trim();
+		}
+
+		function euros( nombre ) {
+			return nombre.toFixed( 2 ).replace( '.', ',' ) + ' €';
+		}
+
+		// Une étiquette "filtre actif" avec une croix qui retire ce filtre.
+		function ajouterPuce( texte, retirer ) {
+			var li = document.createElement( 'li' );
+			var bouton = document.createElement( 'button' );
+			bouton.type = 'button';
+			bouton.className = 'carte-recherche__puce';
+			bouton.textContent = texte + ' ✕';
+			bouton.setAttribute( 'aria-label', 'Retirer le filtre ' + texte );
+			bouton.addEventListener( 'click', function () {
+				retirer();
+				appliquer();
+			} );
+			li.appendChild( bouton );
+			puces.appendChild( li );
+		}
+
+		function appliquer() {
+			var mot = sansAccents( formulaire.mot.value );
+			var max = parseFloat( curseur.value );
+			var tailles = Array.prototype.filter.call( formulaire.querySelectorAll( '[name="taille"]' ), function ( c ) {
+				return c.checked;
+			} );
+			var trouves = 0;
+
+			produits.forEach( function ( produit ) {
+				var section = produit.closest( '[data-categorie]' );
+				var visible = ( 'tout' === categorie || section.dataset.categorie === categorie ) &&
+					( '' === mot || -1 !== produit.dataset.texte.indexOf( mot ) ) &&
+					parseFloat( produit.dataset.prix ) <= max &&
+					( 0 === tailles.length || tailles.some( function ( c ) {
+						return -1 !== ( ' ' + produit.dataset.tailles + ' ' ).indexOf( ' ' + c.value + ' ' );
+					} ) );
+
+				produit.hidden = ! visible;
+				trouves += visible ? 1 : 0;
+			} );
+
+			// Une catégorie sans produit visible est masquée.
+			sections.forEach( function ( section ) {
+				section.hidden = ! section.querySelector( '.carte-produit:not([hidden])' );
+			} );
+
+			vide.hidden = trouves > 0;
+			total.innerHTML = '<strong>' + trouves + ' produit' + ( trouves > 1 ? 's' : '' ) + '</strong> trouvé' + ( trouves > 1 ? 's' : '' );
+
+			// Les étiquettes des filtres actifs.
+			puces.innerHTML = '';
+
+			if ( mot ) {
+				ajouterPuce( '« ' + formulaire.mot.value.trim() + ' »', function () {
+					formulaire.mot.value = '';
+				} );
+			}
+
+			if ( max < parseFloat( curseur.max ) ) {
+				ajouterPuce( '≤ ' + euros( max ), function () {
+					curseur.value = curseur.max;
+					prixMax.textContent = curseur.max + ' €';
+				} );
+			}
+
+			tailles.forEach( function ( c ) {
+				ajouterPuce( c.dataset.nom, function () {
+					c.checked = false;
+				} );
+			} );
+
+			if ( 'tout' !== categorie ) {
+				ajouterPuce( carte.querySelector( '[data-categorie="' + categorie + '"]' ).dataset.nom, function () {
+					choisirCategorie( 'tout' );
+				} );
+			}
+		}
+
+		function choisirCategorie( filtre ) {
+			categorie = filtre;
+
+			boutons.forEach( function ( b ) {
+				b.classList.toggle( 'carte-filtres__lien--actif', b.dataset.filtre === filtre );
+				b.setAttribute( 'aria-pressed', b.dataset.filtre === filtre ? 'true' : 'false' );
+			} );
+		}
 
 		boutons.forEach( function ( bouton ) {
 			bouton.addEventListener( 'click', function () {
-				var filtre = bouton.dataset.filtre;
-
-				boutons.forEach( function ( b ) {
-					b.classList.toggle( 'carte-filtres__lien--actif', b === bouton );
-					b.setAttribute( 'aria-pressed', b === bouton ? 'true' : 'false' );
-				} );
-
-				sections.forEach( function ( section ) {
-					section.hidden = ( filtre !== 'tout' && section.dataset.categorie !== filtre );
-				} );
+				choisirCategorie( bouton.dataset.filtre );
+				appliquer();
 			} );
 		} );
+
+		// Le prix affiché suit le curseur.
+		curseur.addEventListener( 'input', function () {
+			prixMax.textContent = curseur.value + ' €';
+		} );
+
+		// "Filtrer" : on applique sans recharger la page. En mobile, on replie la colonne.
+		formulaire.addEventListener( 'submit', function ( e ) {
+			e.preventDefault();
+			appliquer();
+
+			if ( window.matchMedia( '(max-width: 47.94rem)' ).matches ) {
+				cadre.open = false;
+			}
+		} );
+
+		// "Réinitialiser" : on attend que le formulaire soit vidé, puis on réaffiche tout.
+		formulaire.addEventListener( 'reset', function () {
+			setTimeout( function () {
+				prixMax.textContent = curseur.max + ' €';
+				choisirCategorie( 'tout' );
+				appliquer();
+			} );
+		} );
+
+		vide.querySelector( 'button' ).addEventListener( 'click', function () {
+			formulaire.reset();
+		} );
+
+		appliquer();
 	} )();
 	</script>
 	<?php
 	return ob_get_clean();
+}
+
+/**
+ * US-18.1 : tailles d'un produit, lues dans son attribut "Taille" (Simple, Double...).
+ * Marche que l'attribut soit global (Produits > Attributs) ou créé dans le produit.
+ */
+function watsons_tailles_produit( $produit ) {
+	$tailles = $produit->get_attribute( 'taille' );
+
+	return $tailles ? array_map( 'trim', explode( ',', $tailles ) ) : array();
 }
 
 /**
