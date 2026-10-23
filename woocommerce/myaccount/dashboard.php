@@ -79,6 +79,7 @@ $nom_affiche = is_email( $utilisateur->display_name ) ? $utilisateur->user_login
 						<th class="compte-commandes__entete">Statut</th>
 						<th class="compte-commandes__entete">Total</th>
 						<th class="compte-commandes__entete compte-commandes__entete--voir">Voir</th>
+						<th class="compte-commandes__entete">Facture</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -92,6 +93,18 @@ $nom_affiche = is_email( $utilisateur->display_name ) ? $utilisateur->user_login
 							<td class="compte-commandes__cellule"><?php echo wp_kses_post( $commande->get_formatted_order_total() ); ?></td>
 							<td class="compte-commandes__cellule compte-commandes__cellule--voir">
 								<a class="compte-commandes__bouton" href="<?php echo esc_url( $commande->get_view_order_url() ); ?>">Voir</a>
+							</td>
+							<?php /* US-17.3 : facture à télécharger (seulement si elle existe) */ ?>
+							<td class="compte-commandes__cellule">
+								<?php $lien_facture = watsons_lien_facture( $commande ); ?>
+								<?php if ( $lien_facture ) : ?>
+									<a class="compte-commandes__facture" href="<?php echo esc_url( $lien_facture ); ?>" target="_blank" rel="noopener">
+										<svg class="compte-commandes__icone" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13h10"/></svg>
+										<span class="screen-reader-text">Télécharger la facture de la commande N°<?php echo esc_html( $commande->get_order_number() ); ?></span>
+									</a>
+								<?php else : ?>
+									<span class="compte-commandes__sans-facture" aria-label="Pas de facture">–</span>
+								<?php endif; ?>
 							</td>
 						</tr>
 					<?php endforeach; ?>

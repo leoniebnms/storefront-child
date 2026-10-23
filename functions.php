@@ -1791,3 +1791,63 @@ add_shortcode(
 		return watsons_nouveautes();
 	}
 );
+
+/** US-17 : factures PDF (extension "PDF Invoices & Packing Slips for WooCommerce") */
+
+/**
+ * US-17.2 : style du modèle "watsons" (woocommerce/pdf/watsons/invoice.php).
+ * Comme pour les e-mails, on lit la partie de style.css entre "DEBUT FACTURE PDF" et "FIN FACTURE PDF",
+ * et on donne au moteur PDF le chemin complet de la police Tall Dark.
+ */
+add_filter( 'wpo_wcpdf_template_styles', function ( $css, $document ) {
+	$modele = is_object( $document ) && is_callable( array( $document, 'get_template_path' ) ) ? $document->get_template_path() : '';
+
+	if ( false === strpos( wp_normalize_path( $modele ), 'pdf/watsons' ) ) {
+		return $css;
+	}
+
+	$feuille = file_get_contents( get_stylesheet_directory() . '/style.css' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- fichier du thème.
+	$debut   = strpos( $feuille, '/* DEBUT FACTURE PDF' );
+	$fin     = strpos( $feuille, '/* FIN FACTURE PDF */' );
+
+	if ( false === $debut || false === $fin ) {
+		return $css;
+	}
+
+	$section = substr( $feuille, $debut, $fin - $debut );
+
+	return str_replace( 'url("fonts/', 'url("' . get_stylesheet_directory() . '/fonts/', $section );
+}, 20, 2 );
+
+// Dates des factures au format 21/10/2026.
+add_filter( 'wpo_wcpdf_date_format', function () {
+	return 'd/m/Y';
+} );
+
+/**
+ * US-17.3 : lien de téléchargement de la facture d'une commande, pour Mon compte.
+ */
+function watsons_lien_facture( $commande ) {
+	$actions = wc_get_account_orders_actions( $commande );
+
+	return isset( $actions['invoice']['url'] ) ? $actions['invoice']['url'] : '';
+}
+
+// "Facture n° 2026-0001 du 21/10/2026", sous le bouton de la page détail.
+function watsons_infos_facture( $commande ) {
+	if ( ! function_exists( 'wcpdf_get_document' ) ) {
+		return '';
+	}
+
+	$facture = wcpdf_get_document( 'invoice', $commande );
+
+	if ( ! $facture || ! $facture->exists() ) {
+		return '';
+	}
+
+	$numero = $facture->get_number();
+	$numero = is_object( $numero ) && is_callable( array( $numero, 'get_formatted' ) ) ? $numero->get_formatted() : (string) $numero;
+	$date   = $facture->get_date();
+
+	return 'Facture n° ' . $numero . ( $date ? ' du ' . $date->date_i18n( 'd/m/Y' ) : '' );
+}

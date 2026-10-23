@@ -3992,6 +3992,52 @@ html {
   }
 }
 
+/* US-17.3 : colonne "Facture" de Mes commandes, icône de téléchargement */
+.compte-commandes__facture {
+  display: inline-block;
+  color: var(--noir);
+  text-decoration: none;
+}
+
+.compte-commandes__facture:hover,
+.compte-commandes__facture:focus {
+  color: var(--rouille);
+}
+
+.compte-commandes__icone,
+.commande-facture__icone {
+  width: 1.13rem;
+  height: 1.13rem;
+  vertical-align: middle;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+.compte-commandes__sans-facture {
+  color: var(--gris);
+}
+
+/* US-17.3 : bouton "Télécharger ma facture (PDF)" de la page détail */
+.commande-facture {
+  margin: 0 0 1.75rem;
+}
+
+.compte .commande-facture__bouton {
+  margin: 0;
+  text-decoration: none;
+}
+
+.commande-facture__icone {
+  margin-right: 0.5rem;
+}
+
+.commande-facture__info {
+  margin: 0.38rem 0 0;
+  font-size: 0.75rem;
+  color: var(--gris);
+}
+
 /* DEBUT E-MAILS
  * US-8.2 / US-8.4 : style des e-mails du Watson's Pub.
  * Cette partie ne change rien sur le site : functions.php la lit et la donne à WooCommerce pour les e-mails.
@@ -4205,3 +4251,197 @@ html {
   }
 }
 /* FIN E-MAILS */
+
+/* DEBUT FACTURE PDF
+   US-17.2 : style de la facture PDF (modèle woocommerce/pdf/watsons/invoice.php).
+   Cette partie est lue par functions.php et envoyée à l'extension Factures PDF.
+   Pas de flex ni de grid : le moteur PDF ne les connaît pas, on utilise des tableaux. */
+@page {
+  margin: 0;
+}
+
+/* Police des titres : le chemin est complété par functions.php pour le PDF */
+@font-face {
+  font-family: "Tall Dark And Handsome";
+  src: url("fonts/talldark.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.facture {
+  padding: 2.5rem 3.13rem 0;
+  font-family: "Open Sans", sans-serif;
+  font-size: 0.69rem;
+  line-height: 1.45;
+  color: #000;
+}
+
+.facture p {
+  margin: 0;
+}
+
+.facture table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.facture td,
+.facture th {
+  padding: 0;
+  vertical-align: top;
+  text-align: left;
+}
+
+/* En-tête : logo à gauche, FACTURE à droite */
+.facture-entete__logo img {
+  width: 5.5rem;
+  height: auto;
+}
+
+.facture .facture-entete__droite {
+  text-align: right;
+}
+
+.facture-entete__titre {
+  margin: 0;
+  font-family: "Tall Dark And Handsome", sans-serif;
+  font-weight: normal;
+  font-size: 3rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.facture-entete__numero {
+  font-size: 0.81rem;
+}
+
+/* Le Watson's Pub à gauche, le client dans un cadre à droite */
+.facture-adresses {
+  margin: 1.88rem 0 1.5rem;
+}
+
+.facture-adresses__boutique {
+  width: 50%;
+  padding-right: 1.5rem;
+}
+
+.facture .facture-adresses__client {
+  padding: 0.75rem 1rem;
+  border: 0.06rem solid #8c8c8c;
+}
+
+.facture-adresses__titre {
+  margin: 0 0 0.38rem;
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+  font-size: 0.81rem;
+  text-transform: uppercase;
+  color: #b03d1a;
+}
+
+/* Commande / Date / Réception / Paiement dans des cases */
+.facture-infos {
+  margin-bottom: 1.5rem;
+}
+
+.facture .facture-infos__case {
+  width: 25%;
+  padding: 0.5rem 0.75rem;
+  border: 0.06rem solid #8c8c8c;
+}
+
+.facture-infos__libelle {
+  display: block;
+  font-size: 0.56rem;
+  color: #8c8c8c;
+}
+
+/* Tableau des produits : en-tête gris, lignes en pointillés */
+.facture .facture-produits__entete {
+  padding: 0.5rem 0.63rem;
+  background: #e2e2e2;
+  font-weight: normal;
+}
+
+.facture .facture-produits__cellule {
+  padding: 0.56rem 0.63rem;
+  border-bottom: 0.06rem dotted #000;
+}
+
+.facture .facture-produits__entete--nombre,
+.facture .facture-produits__cellule--nombre {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.facture-produits__options {
+  display: block;
+  font-size: 0.56rem;
+  color: #8c8c8c;
+}
+
+/* Totaux à droite */
+.facture .facture-totaux {
+  width: 45%;
+  margin: 1.25rem 0 0 55%;
+}
+
+.facture .facture-totaux__libelle,
+.facture .facture-totaux__montant {
+  padding: 0.25rem 0;
+}
+
+.facture .facture-totaux__montant {
+  text-align: right;
+}
+
+.facture .facture-totaux__ttc td {
+  padding-top: 0.5rem;
+  border-top: 0.13rem solid #000;
+  font-weight: bold;
+}
+
+/* "Facture acquittée" dans un cadre vert */
+.facture-acquittee {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 0.38rem 0.75rem;
+  border: 0.06rem solid #3c7a3c;
+  color: #3c7a3c;
+}
+
+/* Le ✓ n'existe pas dans Open Sans : police DejaVu Sans du moteur PDF */
+.facture-acquittee__icone {
+  font-family: "DejaVu Sans", sans-serif;
+}
+
+/* Mentions légales en petit gris */
+.facture-mentions {
+  margin-top: 1.25rem;
+  font-size: 0.5rem;
+  color: #8c8c8c;
+}
+
+/* Bande rouille collée en bas de la page */
+.facture-pied {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 0 1.13rem;
+  background: #b03d1a;
+  color: #fff;
+  text-align: center;
+}
+
+.facture-pied__titre {
+  font-family: "Tall Dark And Handsome", sans-serif;
+  font-size: 1.38rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.facture-pied__texte {
+  font-size: 0.56rem;
+}
+/* FIN FACTURE PDF */

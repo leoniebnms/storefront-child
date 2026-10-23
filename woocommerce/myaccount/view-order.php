@@ -47,6 +47,17 @@ $annulee = isset( $_GET['annulee'] ) && $commande->has_status( 'cancelled' );
 		– <?php echo esc_html( $commande->get_payment_method_title() ); ?>
 	</p>
 
+	<?php /* US-17.3 : télécharger la facture (seulement si elle existe : commande validée) */ ?>
+	<?php $lien_facture = watsons_lien_facture( $commande ); ?>
+	<?php if ( $lien_facture ) : ?>
+		<div class="commande-facture">
+			<a class="compte-bouton commande-facture__bouton" href="<?php echo esc_url( $lien_facture ); ?>" target="_blank" rel="noopener">
+				<svg class="commande-facture__icone" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8M4.5 6.5 8 10l3.5-3.5M3 13h10"/></svg>Télécharger ma facture (PDF)
+			</a>
+			<p class="commande-facture__info"><?php echo esc_html( watsons_infos_facture( $commande ) ); ?></p>
+		</div>
+	<?php endif; ?>
+
 	<?php /* Récapitulatif (sans accent dans le titre : la police Tall Dark n'en a pas) */ ?>
 	<section class="compte-cadre">
 		<h2 class="compte-cadre__titre commande-detail__titre">Recapitulatif de la commande</h2>
